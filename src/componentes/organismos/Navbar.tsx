@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import MenuUsuario from "../moleculas/MenuUsuario";
+import { useAuth } from "../../data/AuthContext";
 
 const enlaces = [
     { to: "/iniciopublico", texto: "Inicio" },
@@ -7,11 +9,11 @@ const enlaces = [
     { to: "/noticias", texto: "Noticias" },
     { to: "/quienes", texto: "Quienes somos" },
     { to: "/contacto", texto: "Contacto" },
-    { to: "/login", texto: "Iniciar Sesión" },
 ];
 
 function Navbar() {
     const [abierto, setAbierto] = useState(false);
+    const { user } = useAuth();
     const cerrar = () => setAbierto(false);
 
     return (
@@ -46,6 +48,15 @@ function Navbar() {
                                 </Link>
                             </li>
                         ))}
+                        <li className="nav-item ms-lg-2">
+                            {user ? (
+                                <MenuUsuario />
+                            ) : (
+                                <Link className="nav-link fs-5 px-3 fw-medium" to="/login" onClick={cerrar}>
+                                    Iniciar Sesión
+                                </Link>
+                            )}
+                        </li>
                     </ul>
                 </div>
             </div>

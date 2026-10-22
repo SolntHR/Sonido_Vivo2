@@ -7,6 +7,11 @@ export interface Usuario {
     password?: string;
     rol: 'Cliente' | 'Administrador';
     activo: boolean;
+    // Datos de perfil (opcionales, se completan al registrarse o en /perfil)
+    region?: string;
+    comuna?: string;
+    telefono?: string;
+    foto?: string; // imagen en formato data URL
 }
 
 export interface Producto {
@@ -23,7 +28,8 @@ export interface Producto {
 
 // Datos iniciales por defecto
 const usuariosDefault: Usuario[] = [
-    { rut: "11111111-1", nombre: "Admin Test", correo: "admin@sonidovivo.cl", password: "12345678", rol: "Administrador", activo: true }
+    { rut: "11111111-1", nombre: "Admin Test", correo: "admin@sonidovivo.cl", password: "12345678", rol: "Administrador", activo: true },
+    { rut: "12345678-5", nombre: "Cliente Test", correo: "cliente@sonidovivo.cl", password: "12345678", rol: "Cliente", activo: true, region: "Región Metropolitana", comuna: "Santiago" }
 ];
 
 // === CRUD USUARIOS ===
@@ -33,7 +39,16 @@ export const getUsuarios = (): Usuario[] => {
         localStorage.setItem('usuarios', JSON.stringify(usuariosDefault));
         return usuariosDefault;
     }
-    return JSON.parse(data);
+    const guardados: Usuario[] = JSON.parse(data);
+    // Si falta algún usuario por defecto (ej: se agregó uno nuevo a usuariosDefault
+    // después de que el navegador ya tenía datos guardados), lo agregamos.
+    const faltantes = usuariosDefault.filter(d => !guardados.some(u => u.correo === d.correo));
+    if (faltantes.length > 0) {
+        const actualizados = [...guardados, ...faltantes];
+        localStorage.setItem('usuarios', JSON.stringify(actualizados));
+        return actualizados;
+    }
+    return guardados;
 };
 
 export const guardarUsuarios = (usuarios: Usuario[]) => {

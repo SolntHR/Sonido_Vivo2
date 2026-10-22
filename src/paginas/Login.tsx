@@ -12,7 +12,7 @@ function Login() {
             
             <div className="text-center mt-3">
               <small className="text-secondary">
-                ¿No tienes cuenta? <Link to="/registro" className="text-primary">Regístrate aquí</Link>
+                ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>
               </small>
             </div>
           </div>

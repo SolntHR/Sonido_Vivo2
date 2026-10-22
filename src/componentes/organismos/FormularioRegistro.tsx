@@ -2,40 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { getUsuarios, guardarUsuarios } from "../../data/db";
-
-// 1. Validador de RUT
-const validarRut = (rutCompleto: string): boolean => {
-    const rutLimpio = rutCompleto.replace(/[.-]/g, '');
-    if (rutLimpio.length < 8) return false;
-    if (!/^[0-9]+[0-9kK]{1}$/.test(rutLimpio)) return false;
-
-    const cuerpo = rutLimpio.slice(0, -1);
-    const dvIngresado = rutLimpio.slice(-1).toUpperCase();
-
-    let suma = 0;
-    let multiplicador = 2;
-
-    for (let i = cuerpo.length - 1; i >= 0; i--) {
-        suma += parseInt(cuerpo[i]) * multiplicador;
-        multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
-    }
-
-    const resto = suma % 11;
-    const dvCalculado = 11 - resto;
-
-    let dvEsperado = dvCalculado.toString();
-    if (dvCalculado === 11) dvEsperado = '0';
-    if (dvCalculado === 10) dvEsperado = 'K';
-
-    return dvEsperado === dvIngresado;
-};
-
-// Datos regiones
-const regionesData = [
-    { region: "Región Metropolitana", comunas: ["Santiago", "Maipú", "Providencia", "Ñuñoa", "Puente Alto"] },
-    { region: "Región de Valparaíso", comunas: ["Valparaíso", "Viña del Mar", "Quilpué", "San Antonio"] },
-    { region: "Región del Biobío", comunas: ["Concepción", "Talcahuano", "Los Ángeles"] }
-];
+import { regionesData } from "../../data/regiones";
+import { validarRut, normalizarRut, mismoRut } from "../../data/rut";
 
 function FormularioRegistro() {
     const navigate = useNavigate();
@@ -79,18 +47,27 @@ function FormularioRegistro() {
 
     // Guardar usuario
     const usuarios = getUsuarios();
+    const erroresDuplicado: Record<string, string> = {};
+    if (usuarios.some(u => mismoRut(u.rut, form.rut))) {
+        erroresDuplicado.rut = "Este RUN ya está registrado.";
+    }
     if (usuarios.some(u => u.correo === form.correo)) {
-        setErrores({ correo: "Este correo ya está registrado." });
+        erroresDuplicado.correo = "Este correo ya está registrado.";
+    }
+    if (Object.keys(erroresDuplicado).length > 0) {
+        setErrores(erroresDuplicado);
         return;
     }
 
     const nuevoUsuario = {
-        rut: form.rut,
+        rut: normalizarRut(form.rut), // siempre se guarda como 12345678-5
         nombre: `${form.nombre} ${form.apellido}`,
         correo: form.correo,
         password: form.password,
         rol: 'Cliente' as const,
-        activo: true
+        activo: true,
+        region: form.region,
+        comuna: form.comuna
     };
 
     guardarUsuarios([...usuarios, nuevoUsuario]);
@@ -105,7 +82,7 @@ function FormularioRegistro() {
     return (
         <form onSubmit={handleSubmit} noValidate>
         
-        <CampoFormulario etiqueta="RUN (Sin puntos ni guion)" tipo="text" nombre="rut" valor={form.rut} alCambiar={(v) => handleChange('rut', v)} error={errores.rut} />
+        <CampoFormulario etiqueta="RUN (con o sin puntos y guion)" tipo="text" nombre="rut" valor={form.rut} alCambiar={(v) => handleChange('rut', v)} error={errores.rut} />
 
         <div className="row">
             <div className="col-md-6">

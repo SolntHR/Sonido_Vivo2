@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsuarios, guardarUsuarios } from '../data/db';
+import { validarRut, normalizarRut, mismoRut } from '../data/rut';
 import type { Usuario } from '../data/db';
 import FormularioUsuario, { type UsuarioFormData } from '../componentes/organismos/FormularioUsuario';
 import TablaAdmin from '../componentes/organismos/TablaAdmin';
@@ -28,7 +29,13 @@ const AdminUsuarios = () => {
     e.preventDefault();
     
     const nuevosErrores: Record<string, string> = {};
-    if (!form.rut) nuevosErrores.rut = "El RUT es obligatorio";
+    if (!form.rut.trim()) {
+      nuevosErrores.rut = "El RUT es obligatorio";
+    } else if (!validarRut(form.rut)) {
+      nuevosErrores.rut = "El RUT ingresado no es válido (revise el dígito verificador)";
+    } else if (usuarios.some(u => u.rut !== usuarioEditando && mismoRut(u.rut, form.rut))) {
+      nuevosErrores.rut = "Este RUT ya está registrado";
+    }
     if (!form.nombre) nuevosErrores.nombre = "El nombre es obligatorio";
     if (!form.correo.includes('@')) nuevosErrores.correo = "Correo inválido";
     
@@ -38,17 +45,15 @@ const AdminUsuarios = () => {
     }
 
     let nuevaLista: Usuario[];
+    // El RUT se guarda siempre normalizado: 12345678-5
+    const datos = { ...form, rut: normalizarRut(form.rut) };
 
     if (usuarioEditando) {
       // UPDATE
-      nuevaLista = usuarios.map(u => u.rut === usuarioEditando ? { ...u, ...form } as Usuario : u);
+      nuevaLista = usuarios.map(u => u.rut === usuarioEditando ? { ...u, ...datos } as Usuario : u);
     } else {
       // CREATE
-      if (usuarios.some(u => u.rut === form.rut)) {
-        setErrores({ rut: "Este RUT ya está registrado" });
-        return;
-      }
-      nuevaLista = [...usuarios, { ...form, activo: true } as Usuario];
+      nuevaLista = [...usuarios, { ...datos, activo: true } as Usuario];
     }
 
     setUsuarios(nuevaLista);

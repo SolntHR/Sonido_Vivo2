@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { useAuth } from '../../data/AuthContext';
+import { getUsuarios } from '../../data/db';
 
 
 function FormularioLogin() {
@@ -54,7 +55,9 @@ function FormularioLogin() {
         
         if (exito) {
             setErrores({});
-            navigate("/admin"); // Redirige a la vista de admin
+            // Administrador al panel; clientes a su perfil
+            const rol = getUsuarios().find(u => u.correo === correo)?.rol;
+            navigate(rol === "Administrador" ? "/admin" : "/perfil");
         } else {
             setErrores({ general: "Credenciales incorrectas. Verifique su correo y contraseña." });
         }

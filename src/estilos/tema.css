@@ -40,3 +40,110 @@
 }
 
 .navbar-toggler.border-gold:focus { box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.4); }
+
+/* ============================================================
+   Zona pública (fondo oscuro): texto más brillante y cards traslúcidas.
+   Todo va dentro de .bg-patron-infinito para no afectar el panel admin.
+   ============================================================ */
+.bg-patron-infinito {
+  color: #f2f2f2;
+}
+
+.bg-patron-infinito h1,
+.bg-patron-infinito h2,
+.bg-patron-infinito h3,
+.bg-patron-infinito h4,
+.bg-patron-infinito h5,
+.bg-patron-infinito h6 {
+  color: #ffffff;
+}
+
+.bg-patron-infinito p,
+.bg-patron-infinito label,
+.bg-patron-infinito li,
+.bg-patron-infinito small {
+  color: #e8e8e8;
+}
+
+.bg-patron-infinito .text-secondary,
+.bg-patron-infinito .text-muted {
+  color: #c4c4c4 !important;
+}
+
+.bg-patron-infinito a:not(.btn):not(.nav-link):not(.navbar-brand):not(.tarjeta-categoria) {
+  color: var(--gold);
+}
+.bg-patron-infinito a:not(.btn):not(.nav-link):not(.navbar-brand):not(.tarjeta-categoria):hover {
+  color: var(--gold-hover);
+}
+
+.bg-patron-infinito .nav-link { color: #f2f2f2; }
+.bg-patron-infinito .nav-link:hover,
+.bg-patron-infinito .nav-link:focus { color: var(--gold); }
+
+/* Cards traslúcidas */
+.bg-patron-infinito .card {
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #f2f2f2;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.bg-patron-infinito .card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+.bg-patron-infinito .card .card-title,
+.bg-patron-infinito .card .card-text { color: #fff; }
+
+/* Las tarjetas de categoría ya tienen su propio fondo con imagen */
+.bg-patron-infinito .tarjeta-categoria {
+  background: #000;
+  backdrop-filter: none;
+  border: 0;
+}
+
+/* Formularios sobre fondo oscuro */
+.bg-patron-infinito .form-control,
+.bg-patron-infinito .form-select {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.bg-patron-infinito .form-control::placeholder { color: #b5b5b5; }
+.bg-patron-infinito .form-control:focus,
+.bg-patron-infinito .form-select:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+  color: #fff;
+}
+.bg-patron-infinito .form-control:disabled,
+.bg-patron-infinito .form-control[readonly] {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #cfcfcf;
+}
+.bg-patron-infinito .form-select option { background: #1a1a1a; color: #fff; }
+
+/* Botones primarios/secundarios en versión dorada */
+.bg-patron-infinito .btn-primary {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+  font-weight: 600;
+}
+.bg-patron-infinito .btn-primary:hover,
+.bg-patron-infinito .btn-primary:focus {
+  background-color: var(--gold-hover);
+  border-color: var(--gold-hover);
+  color: #000;
+}
+.bg-patron-infinito .btn-secondary {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+.bg-patron-infinito .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.15); color: #fff; }
+
+.bg-patron-infinito .alert { backdrop-filter: blur(6px); }

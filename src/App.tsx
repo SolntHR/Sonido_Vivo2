@@ -13,6 +13,7 @@ import Quienes from './paginas/Quienes'
 import Login from './paginas/Login'
 import Registro from './paginas/Registro';
 import Noticias from './paginas/Noticias'
+import Perfil from './paginas/Perfil'
 // admin
 import InicioAdmin from './paginas/InicioAdmin'
 import AdminUsuarios from './paginas/AdminUsuarios'
@@ -74,9 +75,14 @@ function App() {
               path="/novedades"
               element={<Navigate to="/noticias" replace />}
             />
+
+            {/* Perfil: solo para usuarios con sesión iniciada */}
+            <Route element={<RutaProtegida />}>
+              <Route path="/perfil" element={<Perfil />} />
+            </Route>
           </Route>
 
-          <Route element={<RutaProtegida />}>
+          <Route element={<RutaProtegida rol="Administrador" />}>
         
             <Route element={<LayoutAdmin />}>
               <Route path="/admin" element={<InicioAdmin />} />
