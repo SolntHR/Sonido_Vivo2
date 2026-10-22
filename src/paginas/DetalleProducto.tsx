@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { productos } from "../data/coleccion";
+import { productos } from "../data/Coleccion";
 import BotonVolver from "../componentes/atomos/BotonVolver";
 
 function DetalleProducto() {

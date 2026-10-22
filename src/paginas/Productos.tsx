@@ -1,5 +1,5 @@
 import CardProducto from "../componentes/moleculas/CardProducto";
-import { productos } from "../data/coleccion";
+import { productos } from "../data/Coleccion";
 
 function Productos(){
     return(

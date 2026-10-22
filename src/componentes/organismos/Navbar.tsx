@@ -22,6 +22,10 @@ function Navbar(){
                         Productos
                     </Link>
 
+                    <Link className="nav-link text-white" to="/novedades">
+                        Novedades
+                    </Link>
+
                     <Link className="nav-link text-white" to="/quienes">
                         Quienes somos
                     </Link>
@@ -33,6 +37,8 @@ function Navbar(){
                     <Link className="nav-link text-white" to="/login">
                         Login
                     </Link>
+
+                    
 
                 </div>
             </div>

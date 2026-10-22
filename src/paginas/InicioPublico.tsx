@@ -1,4 +1,4 @@
-function Inicio(){
+function InicioPublico(){
     return(
         <div className="container mt-4">
             <h1>Inicio</h1>
@@ -9,4 +9,4 @@ function Inicio(){
     )
 }
 
-export default Inicio
+export default InicioPublico;
