@@ -12,6 +12,7 @@ export interface Usuario {
 export interface Producto {
     codigo: string;
     categoria: string;
+    nombreproducto?: string;
     marca: string;
     modelo: string;
     precio: number;

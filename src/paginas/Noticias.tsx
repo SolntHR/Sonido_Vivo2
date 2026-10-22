@@ -1,7 +1,7 @@
-function Novedades(){
+function Noticias(){
     return(
         <div className="container mt-4">
-            <h1>Noticias </h1>
+            <h1>Noticias</h1>
             <p>
                 Testing testing
             </p>
@@ -9,4 +9,4 @@ function Novedades(){
     )
 }
 
-export default Novedades;
+export default Noticias;

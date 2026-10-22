@@ -1,0 +1,30 @@
+.zona-scroll {
+  position: absolute;
+  top: 0;
+  bottom: 1.5rem;
+  width: 90px;
+  z-index: 5;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.25s;
+  cursor: pointer;
+}
+.zona-scroll:hover { opacity: 1; }
+
+.zona-scroll-izq {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 0.75rem;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.75), transparent);
+}
+.zona-scroll-der {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 0.75rem;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.75), transparent);
+}
+
+.flecha-indicador {
+  color: var(--gold);
+  font-size: 2rem;
+}

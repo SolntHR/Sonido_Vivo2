@@ -1,0 +1,4 @@
+.contenedor-categorias { overflow-x: auto; }
+
+.ocultar-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.ocultar-scrollbar::-webkit-scrollbar { display: none; }

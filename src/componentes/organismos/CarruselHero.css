@@ -1,0 +1,58 @@
+.hero-carrusel { height: 400px; overflow: hidden; background: #000; }
+
+.hero-titulo {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.titulo-principal {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  letter-spacing: 0.15em;
+  margin: 0;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
+}
+
+.hero-slides, .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-slide { object-fit: cover; opacity: 0; transition: opacity 0.8s ease; }
+.hero-slide.activo { opacity: 1; }
+
+.hero-control {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 11;
+  width: 8%;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.hero-control:hover { opacity: 1; color: var(--gold); }
+.hero-prev { left: 0; }
+.hero-next { right: 0; }
+
+.hero-indicadores {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  z-index: 11;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.hero-indicadores button {
+  width: 30px;
+  height: 3px;
+  border: 0;
+  padding: 0;
+  background: #fff;
+  opacity: 0.5;
+}
+.hero-indicadores button.activo { opacity: 1; background: var(--gold); }

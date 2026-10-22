@@ -1,0 +1,42 @@
+/* Tema "Luxury" de Sonido Vivo (dorado sobre negro) */
+:root {
+  --gold: #d4af37;
+  --gold-hover: #f0cf65;
+}
+
+.text-gold { color: var(--gold) !important; }
+.border-gold { border-color: var(--gold) !important; }
+
+.btn-gold {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+.btn-gold:hover,
+.btn-gold:focus {
+  background-color: var(--gold-hover);
+  border-color: var(--gold-hover);
+  color: #000;
+}
+
+.btn-outline-gold {
+  color: var(--gold);
+  border-color: var(--gold);
+  background-color: transparent;
+}
+.btn-outline-gold:hover,
+.btn-outline-gold:focus {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.bg-patron-infinito {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+    url('/img/bg-logos.png');
+  background-color: #0b0b0b;
+  background-attachment: fixed;
+}
+
+.navbar-toggler.border-gold:focus { box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.4); }

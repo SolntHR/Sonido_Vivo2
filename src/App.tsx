@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 // plantillas
 import LayoutPublico from './componentes/organismos/LayoutPublico';
@@ -12,7 +12,7 @@ import Contacto from './paginas/Contacto'
 import Quienes from './paginas/Quienes'
 import Login from './paginas/Login'
 import Registro from './paginas/Registro';
-import Novedades from './paginas/Novedades'
+import Noticias from './paginas/Noticias'
 // admin
 import InicioAdmin from './paginas/InicioAdmin'
 import AdminUsuarios from './paginas/AdminUsuarios'
@@ -66,8 +66,13 @@ function App() {
             />
 
             <Route
+              path="/noticias"
+              element={<Noticias/>}
+            />
+            {/* Ruta antigua: redirige para no romper links viejos */}
+            <Route
               path="/novedades"
-              element={<Novedades/>}
+              element={<Navigate to="/noticias" replace />}
             />
           </Route>
 

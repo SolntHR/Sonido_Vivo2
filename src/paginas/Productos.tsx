@@ -1,12 +1,20 @@
+import { useSearchParams } from "react-router-dom";
 import CardProducto from "../componentes/moleculas/CardProducto";
 import { productos } from "../data/Coleccion";
 
 function Productos(){
+    // /productos?categoria=Baterías filtra por categoría (viene de las tarjetas del inicio)
+    const [params] = useSearchParams();
+    const categoria = params.get("categoria");
+    const lista = categoria
+        ? productos.filter((p) => p.categoria === categoria)
+        : productos;
+
     return(
         <div className="container mt-4">
-            <h1>Catalogo</h1>
+            <h1>{categoria ?? "Catalogo"}</h1>
             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                {productos.map((producto) => (
+                {lista.map((producto) => (
                     <div className="col d-flex gap-3" key={producto.codigo}>
                         <CardProducto
                             codigo={producto.codigo}
