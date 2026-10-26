@@ -22,7 +22,7 @@ function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-black sticky-top shadow border-bottom border-gold">
             <div className="container-fluid">
-                <Link className="navbar-brand p-0" to="/iniciopublico" onClick={cerrar}>
+                <Link className="navbar-brand p-0 me-auto" to="/iniciopublico" onClick={cerrar}>
                     <img
                         src="/img/logosonidovivo.png"
                         alt="Sonido Vivo"
@@ -31,8 +31,9 @@ function Navbar() {
                         style={{ objectFit: "contain" }}
                     />
                 </Link>
+                <div className="d-flex align-items-center gap-3 order-lg-last">
 
-                <button
+                    <button
                     className="navbar-toggler border-gold"
                     type="button"
                     aria-label="Abrir menú"
@@ -42,8 +43,12 @@ function Navbar() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
 
-                <div className={`collapse navbar-collapse ${abierto ? "show" : ""}`}>
-                    <ul className="navbar-nav ms-auto align-items-center">
+                    <BotonCarrito cantidad={cantidadTotal} onClick={abrirCarrito} />
+            
+                </div>
+
+                <div className={`collapse navbar-collapse order-lg-1 ${abierto ? "show" : ""}`}>
+                    <ul className="navbar-nav ms-auto align-items-center mb-2 mb-lg-0">
                         {enlaces.map((e) => (
                             <li className="nav-item" key={e.to}>
                                 <Link className="nav-link fs-5 px-3 fw-medium" to={e.to} onClick={cerrar}>
@@ -63,7 +68,6 @@ function Navbar() {
                     </ul>
                 </div>
             </div>
-            <BotonCarrito cantidad={cantidadTotal} onClick={abrirCarrito} />
         </nav>
     );
 }
