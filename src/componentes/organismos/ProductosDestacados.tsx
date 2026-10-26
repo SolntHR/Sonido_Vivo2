@@ -1,8 +1,10 @@
 import CardProducto from "../moleculas/CardProducto";
 import BotonDorado from "../atomos/BotonDorado";
 import { getProductos } from "../../data/db";
+import { useCart } from "../../context/CartContext";
 
 function ProductosDestacados() {
+    const { agregarAlCarrito } = useCart();
     // Un producto por categoría, para que la vitrina sea variada (máximo 4).
     const vistas = new Set<string>();
     const destacados = getProductos()
@@ -30,6 +32,7 @@ function ProductosDestacados() {
                             precio={p.precio}
                             descripcion={p.descripcion}
                             imagen={p.imagen ?? ""}
+                            onAgregarCarrito={() => agregarAlCarrito(p)}
                         />
                     </div>
                 ))}

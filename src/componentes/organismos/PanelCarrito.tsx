@@ -1,0 +1,51 @@
+import { useCart } from '../../context/CartContext';
+import ItemCarrito from '../moleculas/ItemCarrito';
+import '../../estilos/PanelCarrito.css'; // Asegúrate de mover tus estilos luxury aquí
+
+function PanelCarrito() {
+    const { isOpen, cerrarCarrito, carrito, total } = useCart();
+
+    if (!isOpen) return null;
+
+    return (
+        <>
+            {/* Fondo oscuro al abrir el offcanvas */}
+            <div className="offcanvas-backdrop fade show" onClick={cerrarCarrito}></div>
+            
+            {/* Panel lateral */}
+            <div className="offcanvas offcanvas-end offcanvas-luxury show" style={{ visibility: 'visible' }} tabIndex={-1}>
+                <div className="offcanvas-header">
+                    <h5 className="offcanvas-title text-gold">Tu Selección</h5>
+                    <button type="button" className="btn-close btn-close-white" onClick={cerrarCarrito}></button>
+                </div>
+                
+                <div className="offcanvas-body d-flex flex-column">
+                    {carrito.length === 0 ? (
+                        <p className="text-secondary text-center mt-4">Tu carrito está vacío.</p>
+                    ) : (
+                        <ul className="list-group mb-3 flex-grow-1 overflow-auto">
+                            {carrito.map(item => (
+                                <ItemCarrito key={item.codigo} item={item} />
+                            ))}
+                        </ul>
+                    )}
+
+                    <div className="mt-auto border-top border-gold pt-3">
+                        <div className="d-flex justify-content-between fw-bold fs-5 mb-3">
+                            <span className="text-light">Total:</span>
+                            <span className="text-gold">${total.toLocaleString('es-CL')}</span>
+                        </div>
+                        <button 
+                            className="btn btn-gold w-100 fw-bold text-uppercase"
+                            disabled={carrito.length === 0}
+                        >
+                            Finalizar Compra
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export default PanelCarrito;

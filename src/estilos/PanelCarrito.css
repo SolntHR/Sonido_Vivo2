@@ -1,0 +1,13 @@
+.offcanvas-luxury {
+  background-color: #111;
+  color: #f2f2f2;
+  border-left: 1px solid var(--gold);
+}
+
+.offcanvas-luxury .offcanvas-header {
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.offcanvas-luxury .list-group-item-luxury {
+  color: #f2f2f2;
+}

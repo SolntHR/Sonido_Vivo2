@@ -1,8 +1,10 @@
 import { useSearchParams } from "react-router-dom";
 import CardProducto from "../componentes/moleculas/CardProducto";
 import { productos } from "../data/Coleccion";
+import { useCart } from "../context/CartContext";
 
 function Productos(){
+    const { agregarAlCarrito } = useCart();
     // /productos?categoria=Baterías filtra por categoría (viene de las tarjetas del inicio)
     const [params] = useSearchParams();
     const categoria = params.get("categoria");
@@ -26,6 +28,7 @@ function Productos(){
                             precio={producto.precio}
                             descripcion={producto.descripcion}
                             imagen={producto.imagen}
+                            onAgregarCarrito={() => agregarAlCarrito(producto)}
                         />
                     </div>
                 ))}

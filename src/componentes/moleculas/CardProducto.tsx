@@ -1,4 +1,5 @@
 import BotonProducto from "../atomos/BotonProducto";
+import BotonAgregar from "../atomos/BotonAgregar";
 
 interface CardProps{
     codigo: string;
@@ -10,9 +11,10 @@ interface CardProps{
     precio: number;
     descripcion: string;
     imagen: string;
+    onAgregarCarrito: () => void;
 }
 
-function CardProducto({codigo,nombreproducto, marca, precio,imagen}: CardProps){
+function CardProducto({codigo,nombreproducto, marca, precio, imagen, onAgregarCarrito }: CardProps){
     return(
         <div className='card' style={{ width: '21rem' }}>
 
@@ -41,6 +43,7 @@ function CardProducto({codigo,nombreproducto, marca, precio,imagen}: CardProps){
                 {/* Empuja el boton hacia abajo para mantener todos los botones alineados*/}
                 <div className="mt-auto">
                     <BotonProducto codigo={codigo}/>
+                    <BotonAgregar onClick={onAgregarCarrito} />
                 </div>
                 
             </div>

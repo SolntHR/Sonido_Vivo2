@@ -1,10 +1,13 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { productos } from "../data/Coleccion";
+import CardDetalle from '../componentes/moleculas/CardDetalle';
 import BotonVolver from "../componentes/atomos/BotonVolver";
+import { useCart } from "../context/CartContext";
 
 function DetalleProducto() {
+    const { agregarAlCarrito } = useCart();
     // Obtenemos el código que viene en la URL (ej: /producto/GA001)
-    const { codigo } = useParams();
+    const { codigo } = useParams<{ codigo: string }>();
 
     // Buscamos el producto comparando el string del código
     const producto = productos.find(p => p.codigo === codigo);
@@ -21,30 +24,31 @@ function DetalleProducto() {
 
     // Si lo encuentra, renderiza la vista
     return (
-        <div className="container mt-4">
-            <h1>Detalle del producto</h1>
+        <div className="container my-5">
+            {/* BREADCRUMBS (Ruta de navegación) */}
+      <nav aria-label="breadcrumb" className="mb-4">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/productos" className="text-warning text-decoration-none">Catálogo</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link 
+              to={`/productos?categoria=${encodeURIComponent(producto.categoria)}`} 
+              className="text-warning text-decoration-none"
+            >
+              {producto.categoria}
+            </Link>
+          </li>
+          <li className="breadcrumb-item active text-white" aria-current="page">
+            {producto.nombreproducto}
+          </li>
+        </ol>
+      </nav>
 
-            {/* Aplicamos fallback por si la imagen viene en null en tu colección */}
-            <img
-                src={producto.imagen || '/placeholder.png'} 
-                alt={producto.nombreproducto}
-                style={{ width: '300px', objectFit: 'contain' }} 
-            />
+      {/* COMPONENTE DE LA TARJETA DE DETALLE */}
+      <CardDetalle producto={producto} onAgregarCarrito={agregarAlCarrito} />
 
-            <h2 className="mt-3">{producto.nombreproducto}</h2>
-            <h5 className="text-muted">{producto.marca} | Modelo: {producto.modelo}</h5>
-            
-            <p className="mt-3">{producto.descripcion}</p>
-            <p className="fw-bold fs-4">${producto.precio}</p>
-            <p className={producto.stock > 0 ? "text-success" : "text-danger"}>
-                Stock disponible: {producto.stock}
-            </p>
-
-            <div className="mt-4">
-                <BotonVolver />
-            </div>
         </div>
     );
 }
-
 export default DetalleProducto;

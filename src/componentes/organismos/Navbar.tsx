@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import MenuUsuario from "./MenuUsuario";
 import { useAuth } from "../../context/AuthContext";
+import BotonCarrito from '../atomos/BotonCarrito';
+import { useCart } from "../../context/CartContext";
 
 const enlaces = [
     { to: "/iniciopublico", texto: "Inicio" },
@@ -15,6 +17,7 @@ function Navbar() {
     const [abierto, setAbierto] = useState(false);
     const { user } = useAuth();
     const cerrar = () => setAbierto(false);
+    const { cantidadTotal, abrirCarrito } = useCart();
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-black sticky-top shadow border-bottom border-gold">
@@ -60,6 +63,7 @@ function Navbar() {
                     </ul>
                 </div>
             </div>
+            <BotonCarrito cantidad={cantidadTotal} onClick={abrirCarrito} />
         </nav>
     );
 }
