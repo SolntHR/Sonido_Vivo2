@@ -1,6 +1,7 @@
-import { useCart } from '../../context/CartContext';
+import { Link } from 'react-router-dom';
+import { useCart } from '../../context/useCart';
 import ItemCarrito from '../moleculas/ItemCarrito';
-import '../../estilos/PanelCarrito.css'; // Asegúrate de mover tus estilos luxury aquí
+import '../../estilos/PanelCarrito.css';
 
 function PanelCarrito() {
     const { isOpen, cerrarCarrito, carrito, total } = useCart();
@@ -35,12 +36,23 @@ function PanelCarrito() {
                             <span className="text-light">Total:</span>
                             <span className="text-gold">${total.toLocaleString('es-CL')}</span>
                         </div>
-                        <button 
-                            className="btn btn-gold w-100 fw-bold text-uppercase"
-                            disabled={carrito.length === 0}
-                        >
-                            Finalizar Compra
-                        </button>
+                        {carrito.length === 0 ? (
+                            <button
+                                type="button"
+                                className="btn btn-gold w-100 fw-bold text-uppercase"
+                                disabled
+                            >
+                                Ver resumen final
+                            </button>
+                        ) : (
+                            <Link
+                                to="/carrito"
+                                onClick={cerrarCarrito}
+                                className="btn btn-gold w-100 fw-bold text-uppercase"
+                            >
+                                Ver resumen final
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

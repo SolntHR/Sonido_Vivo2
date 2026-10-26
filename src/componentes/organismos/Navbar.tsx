@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import MenuUsuario from "./MenuUsuario";
 import { useAuth } from "../../context/AuthContext";
 import BotonCarrito from '../atomos/BotonCarrito';
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 
 const enlaces = [
     { to: "/iniciopublico", texto: "Inicio" },
@@ -56,7 +56,7 @@ function Navbar() {
                                 </Link>
                             </li>
                         ))}
-                        <li className="nav-item ms-lg-2">
+                        <li className="nav-item ms-lg-2 me-lg-4">
                             {user ? (
                                 <MenuUsuario />
                             ) : (

@@ -14,10 +14,12 @@ import Login from './paginas/Login'
 import Registro from './paginas/Registro';
 import Noticias from './paginas/Noticias'
 import Perfil from './paginas/Perfil'
+import CarritoFinal from './paginas/CarritoFinal'
 // admin
 import InicioAdmin from './paginas/InicioAdmin'
 import AdminUsuarios from './paginas/AdminUsuarios'
 import AdminMantenedor from './paginas/AdminMantenedor'
+import NoticiaDetalle from './paginas/DetalleNoticias';
 
 
 function App() {
@@ -39,6 +41,10 @@ function App() {
             <Route
               path="/productos"
               element={<Productos/>}
+            />
+            <Route
+              path="/carrito"
+              element={<CarritoFinal/>}
             />
             {/* Ruta dinamica para mostrar el detalle seun el id del producto*/}
             <Route
@@ -69,6 +75,11 @@ function App() {
             <Route
               path="/noticias"
               element={<Noticias/>}
+            />
+
+            <Route
+              path="/noticias/:id"
+              element={<NoticiaDetalle/>}
             />
             {/* Ruta antigua: redirige para no romper links viejos */}
             <Route

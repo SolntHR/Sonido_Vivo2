@@ -1,32 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardProducto from "../componentes/moleculas/CardProducto";
 //import { productos } from "../data/Coleccion";
 import { categorias } from "../data/categorias"; 
 import { getProductos } from "../data/db";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../context/useCart";
 
 function Productos(){
     const { agregarAlCarrito } = useCart();
     const [params] = useSearchParams();
+    const categoriaURL = params.get("categoria");
     // obtenemos productos
     const [listaProductos] = useState(() => getProductos());
     // manejar las categorias en los checkboxes
-    const [categoriasFiltro, setCategoriasFiltro] = useState<string[]>([]);
-    // ve si en la url hay un parametro de categoria
-    useEffect(() => {
-        const categoriaURL = params.get("categoria");
-        if (categoriaURL) {
-            setCategoriasFiltro([categoriaURL]);
-        }
-    }, [params]);
+    const [seleccionCategorias, setSeleccionCategorias] = useState<string[] | null>(null);
+    const categoriasFiltro = seleccionCategorias ?? (categoriaURL ? [categoriaURL] : []);
     // agregar o quitar categoria
     const handleCheckboxChange = (categoria: string) => {
-        setCategoriasFiltro(prev => 
-            prev.includes(categoria) 
-                ? prev.filter(c => c !== categoria) // Si ya estaba, lo quitamos
-                : [...prev, categoria]              // Si no estaba, lo agregamos
-        );
+        setSeleccionCategorias(prev => {
+            const seleccionActual = prev ?? (categoriaURL ? [categoriaURL] : []);
+            return seleccionActual.includes(categoria)
+                ? seleccionActual.filter(c => c !== categoria)
+                : [...seleccionActual, categoria];
+        });
     };
     // filtrar segun las categorias seleccionadas
     const productosFiltrados = listaProductos.filter(p => {
@@ -40,7 +36,6 @@ function Productos(){
                 <h1>{categoriasFiltro.length === 1 ? categoriasFiltro[0] : "Catálogo"}</h1>
             </div>
 
-            {/* === BARRA DE FILTROS === */}
             <div className="card shadow-sm mb-4 bg-dark border-gold">
                 <div className="card-body py-3">
                     <div className="d-flex flex-wrap gap-3 align-items-center">
@@ -67,7 +62,6 @@ function Productos(){
                 </div>
             </div>
 
-            {/* === GRILLA DE PRODUCTOS === */}
             {productosFiltrados.length > 0 ? (
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
                     {productosFiltrados.map((producto) => (

@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { productos } from "../data/Coleccion";
 import CardDetalle from '../componentes/moleculas/CardDetalle';
 import BotonVolver from "../componentes/atomos/BotonVolver";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../context/useCart";
 
 function DetalleProducto() {
     const { agregarAlCarrito } = useCart();

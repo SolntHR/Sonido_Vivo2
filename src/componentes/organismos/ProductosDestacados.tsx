@@ -1,7 +1,7 @@
 import CardProducto from "../moleculas/CardProducto";
 import BotonDorado from "../atomos/BotonDorado";
 import { getProductos } from "../../data/db";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 
 function ProductosDestacados() {
     const { agregarAlCarrito } = useCart();
