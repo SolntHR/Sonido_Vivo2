@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import TarjetaCategoria from "../moleculas/TarjetaCategoria";
 import ZonaScroll from "../atomos/ZonaScroll";
 import { categorias } from "../../data/categorias";
-import "./CategoriasScroll.css";
+import "../../estilos/CategoriasScroll.css";
 
 function CategoriasScroll() {
     const contenedor = useRef<HTMLDivElement>(null);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsuarios, guardarUsuarios } from '../data/db';
-import { validarRut, normalizarRut, mismoRut } from '../data/rut';
+import { validarRut, normalizarRut, mismoRut, validarEmail, validarPassword } from '../data/validaciones';
 import type { Usuario } from '../data/db';
 import FormularioUsuario, { type UsuarioFormData } from '../componentes/organismos/FormularioUsuario';
 import TablaAdmin from '../componentes/organismos/TablaAdmin';
@@ -37,7 +37,22 @@ const AdminUsuarios = () => {
       nuevosErrores.rut = "Este RUT ya está registrado";
     }
     if (!form.nombre) nuevosErrores.nombre = "El nombre es obligatorio";
-    if (!form.correo.includes('@')) nuevosErrores.correo = "Correo inválido";
+    if (!form.correo.trim()) {
+      nuevosErrores.correo = "El correo es obligatorio";
+    } else if (!validarEmail(form.correo)) {
+      nuevosErrores.correo = "Formato de correo inválido";
+    }
+    
+    if (!usuarioEditando) {
+      if (!form.password) {
+        nuevosErrores.password = "La contraseña es obligatoria";
+      } else {
+        const errorPassword = validarPassword(form.password);
+        if (errorPassword) {
+          nuevosErrores.password = errorPassword;
+        }
+      }
+    }
     
     if (Object.keys(nuevosErrores).length > 0) {
       setErrores(nuevosErrores);

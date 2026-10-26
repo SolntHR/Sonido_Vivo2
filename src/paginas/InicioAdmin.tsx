@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { getProductos, getUsuarios } from "../data/db";
-import { useAuth } from "../data/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const InicioAdmin = () => {
     const { user } = useAuth();

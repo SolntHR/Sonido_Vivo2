@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Avatar from "../atomos/Avatar";
-import { useAuth } from "../../data/AuthContext";
-import "./MenuUsuario.css";
+import { useAuth } from "../../context/AuthContext";
+import "../../estilos/MenuUsuario.css";
 
 // Burbuja con la foto del usuario en el navbar; al hacer clic abre su menú.
 function MenuUsuario() {

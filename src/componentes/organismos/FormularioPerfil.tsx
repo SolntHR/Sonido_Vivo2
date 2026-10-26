@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CampoFormulario from "../moleculas/CampoFormulario";
-import { useAuth } from "../../data/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { regionesData } from "../../data/regiones";
 
 function FormularioPerfil() {

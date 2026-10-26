@@ -1,4 +1,4 @@
-import "./ZonaScroll.css";
+import "../../estilos/ZonaScroll.css";
 
 interface ZonaScrollProps {
     lado: "izq" | "der";

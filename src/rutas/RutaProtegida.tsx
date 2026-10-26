@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../data/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import type { Usuario } from '../data/db';
 
 interface RutaProtegidaProps {

@@ -7,11 +7,11 @@ export interface Usuario {
     password?: string;
     rol: 'Cliente' | 'Administrador';
     activo: boolean;
-    // Datos de perfil (opcionales, se completan al registrarse o en /perfil)
+    // Datos de perfil
     region?: string;
     comuna?: string;
     telefono?: string;
-    foto?: string; // imagen en formato data URL
+    foto?: string;
 }
 
 export interface Producto {

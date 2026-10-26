@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { getUsuarios, guardarUsuarios } from "../../data/db";
 import { regionesData } from "../../data/regiones";
-import { validarRut, normalizarRut, mismoRut } from "../../data/rut";
+import { validarRut, normalizarRut, mismoRut, validarEmail, validarPassword } from "../../data/validaciones";
 
 function FormularioRegistro() {
     const navigate = useNavigate();
@@ -27,15 +27,21 @@ function FormularioRegistro() {
 
         // validaciones
         if (!form.rut.trim()) {
-        nuevosErrores.rut = "El RUN es obligatorio.";
+            nuevosErrores.rut = "El RUN es obligatorio.";
         } else if (!validarRut(form.rut)) {
-        nuevosErrores.rut = "El RUN ingresado no es válido (revise el dígito verificador).";
+            nuevosErrores.rut = "El RUN ingresado no es válido (revise el dígito verificador).";
         }
 
         if (!form.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
         if (!form.apellido.trim()) nuevosErrores.apellido = "Los apellidos son obligatorios.";
-        if (!form.correo.includes('@')) nuevosErrores.correo = "Formato de correo inválido.";
-        if (form.password.length < 8) nuevosErrores.password = "La contraseña debe tener al menos 8 caracteres.";
+        
+        if (!form.correo.trim()) {
+            nuevosErrores.correo = "El correo es obligatorio.";
+        } else if (!validarEmail(form.correo)) {
+            nuevosErrores.correo = "Formato de correo inválido.";
+        }
+        if (!form.password) nuevosErrores.password = "La contraseña es obligatoria.";
+        if (!validarPassword(form.password)) nuevosErrores.password = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.";
         if (form.password !== form.confirmPassword) nuevosErrores.confirmPassword = "Las contraseñas no coinciden.";
         if (!form.region) nuevosErrores.region = "Debe seleccionar una región.";
         if (!form.comuna) nuevosErrores.comuna = "Debe seleccionar una comuna.";

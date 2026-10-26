@@ -27,7 +27,7 @@ function FormularioUsuario({ form, errores, usuarioEditando, handleChange, handl
         <div className="card-body">
             <form onSubmit={handleSubmit} noValidate>
             <CampoFormulario 
-                etiqueta="RUT" 
+                etiqueta="RUT (con o sin puntos y guion)" 
                 tipo="text" 
                 nombre="rut" 
                 valor={form.rut} 
@@ -57,7 +57,8 @@ function FormularioUsuario({ form, errores, usuarioEditando, handleChange, handl
                 tipo="password" 
                 nombre="password" 
                 valor={form.password || ''} 
-                alCambiar={(v) => handleChange('password', v)} 
+                alCambiar={(v) => handleChange('password', v)}
+                error={errores.password}
                 />
             )}
 

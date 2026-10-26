@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from 'react';
 // Usamos "import type" para ReactNode
 import type { ReactNode } from 'react';
-import { getUsuarios, guardarUsuarios } from './db';
+import { getUsuarios, guardarUsuarios } from '../data/db';
 // Usamos "import type" para Usuario
-import type { Usuario } from './db';
+import type { Usuario } from '../data/db';
 
 // Campos que el propio usuario puede modificar desde su perfil
 export type CambiosPerfil = Partial<Pick<Usuario, 'nombre' | 'telefono' | 'region' | 'comuna' | 'foto'>>;

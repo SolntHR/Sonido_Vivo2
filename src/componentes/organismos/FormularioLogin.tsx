@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
-import { useAuth } from '../../data/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { getUsuarios } from '../../data/db';
 
 

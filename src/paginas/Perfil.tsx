@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import SelectorFoto from "../componentes/moleculas/SelectorFoto";
 import FormularioPerfil from "../componentes/organismos/FormularioPerfil";
 import CambiarPassword from "../componentes/organismos/CambiarPassword";
-import { useAuth } from "../data/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 function Perfil() {
     const { user, actualizarPerfil, logout } = useAuth();

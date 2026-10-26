@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./CarruselHero.css";
+import "../../estilos/CarruselHero.css";
 
 const slides = [
     { src: "/img/banner1.png", alt: "Tienda" },

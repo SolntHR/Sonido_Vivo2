@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import MenuUsuario from "../moleculas/MenuUsuario";
-import { useAuth } from "../../data/AuthContext";
+import MenuUsuario from "./MenuUsuario";
+import { useAuth } from "../../context/AuthContext";
 
 const enlaces = [
     { to: "/iniciopublico", texto: "Inicio" },

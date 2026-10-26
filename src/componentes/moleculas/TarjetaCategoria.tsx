@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./TarjetaCategoria.css";
+import "../../estilos/TarjetaCategoria.css";
 
 interface TarjetaCategoriaProps {
     titulo: string;
