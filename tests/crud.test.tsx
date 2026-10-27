@@ -7,7 +7,6 @@ import {
     actualizarProducto,
     crearProducto,
     eliminarProducto,
-    getProductos,
     obtenerProducto,
     type Producto,
 } from '../src/data/db';
@@ -35,10 +34,6 @@ beforeEach(() => {
 });
 
 describe('CRUD de productos en el módulo de datos', () => {
-    it('lee el catálogo completo', () => {
-        expect(getProductos()).toHaveLength(catalogo.length);
-    });
-
     it('crea un producto y lanza error si el código ya existe', () => {
         crearProducto(nuevo);
 

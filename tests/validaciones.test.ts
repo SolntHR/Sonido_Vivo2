@@ -8,7 +8,7 @@ import {
 } from '../src/data/validaciones';
 
 describe('normalizarRut', () => {
-    it('agrega el guion a un RUN sin formato', () => {
+    it('agrega el guion a un RUT sin formato', () => {
         expect(normalizarRut('123456785')).toBe('12345678-5');
     });
 
@@ -26,11 +26,11 @@ describe('normalizarRut', () => {
 });
 
 describe('validarRut', () => {
-    it('acepta un RUN válido con puntos y guion', () => {
+    it('acepta un RUT válido con puntos y guion', () => {
         expect(validarRut('12.345.678-5')).toBe(true);
     });
 
-    it('acepta un RUN válido sin formato', () => {
+    it('acepta un RUT válido sin formato', () => {
         expect(validarRut('123456785')).toBe(true);
     });
 
@@ -42,17 +42,17 @@ describe('validarRut', () => {
         expect(validarRut('12345678-4')).toBe(false);
     });
 
-    it('rechaza un RUN demasiado corto', () => {
+    it('rechaza un RUT demasiado corto', () => {
         expect(validarRut('1234567')).toBe(false);
     });
 
-    it('rechaza letras en el cuerpo del RUN', () => {
+    it('rechaza letras en el cuerpo del RUT', () => {
         expect(validarRut('12A45678-5')).toBe(false);
     });
 });
 
 describe('mismoRut', () => {
-    it('considera iguales RUN con distinto formato', () => {
+    it('considera iguales RUTs con distinto formato', () => {
         expect(mismoRut('12.345.678-5', '12345678-5')).toBe(true);
     });
 
@@ -60,7 +60,7 @@ describe('mismoRut', () => {
         expect(mismoRut('1.000.005-k', '1000005-K')).toBe(true);
     });
 
-    it('considera distintos RUN con números diferentes', () => {
+    it('considera distintos RUTs con números diferentes', () => {
         expect(mismoRut('12345678-5', '11111111-1')).toBe(false);
     });
 });

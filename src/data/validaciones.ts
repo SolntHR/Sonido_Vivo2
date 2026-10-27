@@ -82,6 +82,7 @@ export const validarProducto = (form: DatosProducto): Record<string, string> => 
 
     if (!form.stock.trim()) errores.stock = "El stock es obligatorio.";
     else if (!esEntero(form.stock)) errores.stock = "El stock debe ser un número entero mayor o igual a 0.";
+    else if (Number(form.stock) < 1) errores.stock = "El stock debe ser mínimo 1.";
 
     if (form.descripcion.length > 250) errores.descripcion = "La descripción no puede superar los 250 caracteres.";
 
