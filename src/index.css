@@ -52,10 +52,8 @@
 
 #root {
   width: 100%;
-  min-height: 100vh; /* Corregido: antes decía min-width: 100vh (mezcla de ancho y alto) */
+  min-height: 100vh;
   margin: 0 auto;
-  /* text-align: center;  <-- ELIMINADO: Esto centraba todo el texto de Bootstrap */
-  /* border-inline: 1px solid var(--border); <-- ELIMINADO: Esto dibujaba las líneas a los lados */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;

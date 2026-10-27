@@ -1,14 +1,15 @@
 import CampoFormulario from '../moleculas/CampoFormulario';
 
-// Tipado estricto para el formulario
 export interface ProductoFormData {
     codigo: string;
+    nombreproducto: string;
     categoria: string;
     marca: string;
     modelo: string;
     precio: string;
     stock: string;
     descripcion: string;
+    imagen: string;
 }
 
 interface Props {
@@ -16,7 +17,7 @@ interface Props {
     errores: Record<string, string>;
     codigoEditando: string | null;
     categorias: string[];
-    handleChange: (campo: string, valor: string) => void;
+    handleChange: (campo: keyof ProductoFormData, valor: string) => void;
     handleSubmit: (e: React.FormEvent) => void;
     limpiarFormulario: () => void;
 }
@@ -28,21 +29,32 @@ function FormularioProducto({ form, errores, codigoEditando, categorias, handleC
             <h5 className="mb-0">{codigoEditando ? "Editar Producto" : "Agregar Nuevo Producto"}</h5>
         </div>
         <div className="card-body">
-            <form onSubmit={handleSubmit} noValidate>
-            <CampoFormulario 
-                etiqueta="Código" 
-                tipo="text" 
-                nombre="codigo" 
-                valor={form.codigo} 
-                alCambiar={(v) => handleChange('codigo', v)} 
-                error={errores.codigo} 
+            <form onSubmit={handleSubmit} noValidate aria-label="Formulario de producto">
+            <CampoFormulario
+                etiqueta="Código"
+                tipo="text"
+                nombre="codigo"
+                valor={form.codigo}
+                alCambiar={(v) => handleChange('codigo', v)}
+                error={errores.codigo}
+                deshabilitado={codigoEditando !== null}
             />
-            
+
+            <CampoFormulario
+                etiqueta="Nombre del producto"
+                tipo="text"
+                nombre="nombreproducto"
+                valor={form.nombreproducto}
+                alCambiar={(v) => handleChange('nombreproducto', v)}
+                error={errores.nombreproducto}
+            />
+
             <div className="mb-3">
-                <label className="form-label">Categoría</label>
-                <select 
-                className="form-select" 
-                value={form.categoria} 
+                <label className="form-label" htmlFor="campo-categoria">Categoría</label>
+                <select
+                id="campo-categoria"
+                className={`form-select ${errores.categoria ? 'is-invalid' : ''}`}
+                value={form.categoria}
                 onChange={(e) => handleChange('categoria', e.target.value)}
                 >
                 <option value="">Seleccionar...</option>
@@ -50,56 +62,68 @@ function FormularioProducto({ form, errores, codigoEditando, categorias, handleC
                     <option key={cat} value={cat}>{cat}</option>
                 ))}
                 </select>
+                {errores.categoria && <div className="invalid-feedback d-block" role="alert">{errores.categoria}</div>}
             </div>
 
-            <CampoFormulario 
-                etiqueta="Marca" 
-                tipo="text" 
-                nombre="marca" 
-                valor={form.marca} 
-                alCambiar={(v) => handleChange('marca', v)} 
-                error={errores.marca} 
+            <CampoFormulario
+                etiqueta="Marca"
+                tipo="text"
+                nombre="marca"
+                valor={form.marca}
+                alCambiar={(v) => handleChange('marca', v)}
+                error={errores.marca}
             />
-            <CampoFormulario 
-                etiqueta="Modelo" 
-                tipo="text" 
-                nombre="modelo" 
-                valor={form.modelo} 
-                alCambiar={(v) => handleChange('modelo', v)} 
-                error={errores.modelo} 
+            <CampoFormulario
+                etiqueta="Modelo"
+                tipo="text"
+                nombre="modelo"
+                valor={form.modelo}
+                alCambiar={(v) => handleChange('modelo', v)}
+                error={errores.modelo}
             />
-            
+
             <div className="row">
-                <div className="col-6">
-                <CampoFormulario 
-                    etiqueta="Precio ($)" 
-                    tipo="number" 
-                    nombre="precio" 
-                    valor={form.precio} 
-                    alCambiar={(v) => handleChange('precio', v)} 
-                    error={errores.precio} 
+                <div className="col-12 col-sm-6">
+                <CampoFormulario
+                    etiqueta="Precio ($)"
+                    tipo="number"
+                    nombre="precio"
+                    valor={form.precio}
+                    alCambiar={(v) => handleChange('precio', v)}
+                    error={errores.precio}
                 />
                 </div>
-                <div className="col-6">
-                <CampoFormulario 
-                    etiqueta="Stock" 
-                    tipo="number" 
-                    nombre="stock" 
-                    valor={form.stock} 
-                    alCambiar={(v) => handleChange('stock', v)} 
-                    error={errores.stock} 
+                <div className="col-12 col-sm-6">
+                <CampoFormulario
+                    etiqueta="Stock"
+                    tipo="number"
+                    nombre="stock"
+                    valor={form.stock}
+                    alCambiar={(v) => handleChange('stock', v)}
+                    error={errores.stock}
                 />
                 </div>
             </div>
+
+            <CampoFormulario
+                etiqueta="Imagen (ruta o URL, opcional)"
+                tipo="text"
+                nombre="imagen"
+                valor={form.imagen}
+                alCambiar={(v) => handleChange('imagen', v)}
+                error={errores.imagen}
+            />
 
             <div className="mb-3">
-                <label className="form-label">Descripción Breve</label>
-                <textarea 
-                className="form-control" 
-                rows={2} 
-                value={form.descripcion} 
-                onChange={(e) => handleChange('descripcion', e.target.value)} 
+                <label className="form-label" htmlFor="campo-descripcion">Descripción Breve</label>
+                <textarea
+                id="campo-descripcion"
+                className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
+                rows={2}
+                value={form.descripcion}
+                onChange={(e) => handleChange('descripcion', e.target.value)}
                 />
+                {errores.descripcion && <div className="invalid-feedback d-block" role="alert">{errores.descripcion}</div>}
             </div>
 
             <div className="d-grid gap-2 mt-4">
@@ -107,7 +131,7 @@ function FormularioProducto({ form, errores, codigoEditando, categorias, handleC
                 {codigoEditando ? "Actualizar Cambios" : "Guardar Producto"}
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={limpiarFormulario}>
-                Limpiar
+                {codigoEditando ? "Cancelar edición" : "Limpiar"}
                 </button>
             </div>
             </form>

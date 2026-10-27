@@ -20,13 +20,12 @@ function CambiarPassword() {
         const nuevos: Record<string, string> = {};
         if (!form.actual) nuevos.actual = "Ingresa tu contraseña actual.";
         else {
-            // 2. Aplicamos la validación personalizada que evalúa mayúsculas, minúsculas, números y largo
             const errorPassword = validarPassword(form.nueva);
             if (errorPassword) {
                 nuevos.nueva = errorPassword;
             }
         }
-        
+
         if (form.nueva !== form.confirmar) nuevos.confirmar = "Las contraseñas no coinciden.";
         if (Object.keys(nuevos).length > 0) {
             setErrores(nuevos);

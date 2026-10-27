@@ -3,31 +3,34 @@ import BotonAgregar from "../atomos/BotonAgregar";
 
 interface CardProps{
     codigo: string;
-    categoria: string;
     nombreproducto: string;
     marca: string;
-    modelo: string;
-    stock: number;
     precio: number;
-    descripcion: string;
+    stock: number;
     imagen: string;
     onAgregarCarrito: () => void;
 }
 
-function CardProducto({codigo,nombreproducto, marca, precio, imagen, onAgregarCarrito }: CardProps){
+const IMAGEN_POR_DEFECTO = "/img/logosonidovivo.png";
+
+function CardProducto({codigo, nombreproducto, marca, precio, stock, imagen, onAgregarCarrito }: CardProps){
+    const agotado = stock <= 0;
+
     return(
-        <div className='card' style={{ width: '21rem' }}>
+        <div className='card h-100 w-100' style={{ maxWidth: '21rem' }}>
 
             <img
-            src={imagen}
+            src={imagen || IMAGEN_POR_DEFECTO}
             className="card-img-top"
             alt={nombreproducto}
             style={{height:"200px", objectFit: "contain"}}
+            onError={(e) => {
+                if (!e.currentTarget.src.endsWith(IMAGEN_POR_DEFECTO)) e.currentTarget.src = IMAGEN_POR_DEFECTO;
+            }}
             />
 
-            {/* Organizamos el contenido de la Card de forma vertical*/}
             <div className="card-body d-flex flex-column">
-                
+
                 <h5 className="card-title">
                     {nombreproducto}
                 </h5>
@@ -35,17 +38,20 @@ function CardProducto({codigo,nombreproducto, marca, precio, imagen, onAgregarCa
                 <p className="card-text">
                     {marca}
                 </p>
-                
-                <p className="card-text">
-                    ${precio}
+
+                <p className="card-text fw-bold">
+                    ${precio.toLocaleString('es-CL')}
                 </p>
-                
-                {/* Empuja el boton hacia abajo para mantener todos los botones alineados*/}
-                <div className="mt-auto">
+
+                <div className="mt-auto d-flex flex-wrap gap-2">
                     <BotonProducto codigo={codigo}/>
-                    <BotonAgregar onClick={onAgregarCarrito} />
+                    <BotonAgregar
+                        onClick={onAgregarCarrito}
+                        deshabilitado={agotado}
+                        texto={agotado ? "Sin Stock" : "Añadir al Carrito"}
+                    />
                 </div>
-                
+
             </div>
 
         </div>

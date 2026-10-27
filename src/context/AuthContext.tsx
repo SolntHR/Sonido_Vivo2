@@ -1,19 +1,15 @@
 import { createContext, useContext, useState } from 'react';
-// Usamos "import type" para ReactNode
 import type { ReactNode } from 'react';
-import { getUsuarios, guardarUsuarios } from '../data/db';
-// Usamos "import type" para Usuario
+import { getUsuarios, guardarUsuarios, leerJSON } from '../data/db';
 import type { Usuario } from '../data/db';
 
-// Campos que el propio usuario puede modificar desde su perfil
 export type CambiosPerfil = Partial<Pick<Usuario, 'nombre' | 'telefono' | 'region' | 'comuna' | 'foto'>>;
 
 interface AuthContextType {
     user: Usuario | null;
-    login: (correo: string, password: string) => boolean;
+    login: (correo: string, password: string) => Usuario | null;
     logout: () => void;
     actualizarPerfil: (cambios: CambiosPerfil) => void;
-    // Devuelve un mensaje de error, o null si se cambió correctamente
     cambiarPassword: (actual: string, nueva: string) => string | null;
 }
 
@@ -21,22 +17,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<Usuario | null>(() => {
-        const savedUser = localStorage.getItem('currentUser');
-        if (!savedUser) return null;
-        const guardado: Usuario = JSON.parse(savedUser);
-        // Refrescamos con la versión más reciente de la lista (por si un admin la editó o la eliminó)
-        return getUsuarios().find(u => u.rut === guardado.rut) ?? null;
+        const guardado = leerJSON<Usuario>('currentUser');
+        if (!guardado?.rut) return null;
+        return getUsuarios().find(u => u.rut === guardado.rut && u.activo !== false) ?? null;
     });
 
     const login = (correo: string, password: string) => {
         const usuarios = getUsuarios();
-        const found = usuarios.find(u => u.correo === correo && u.password === password);
-        if (found) {
-            setUser(found);
-            localStorage.setItem('currentUser', JSON.stringify(found));
-            return true;
-        }
-        return false;
+        const correoNormalizado = correo.trim().toLowerCase();
+        const found = usuarios.find(u =>
+            u.correo.toLowerCase() === correoNormalizado && u.password === password && u.activo !== false
+        );
+        if (!found) return null;
+        setUser(found);
+        localStorage.setItem('currentUser', JSON.stringify(found));
+        return found;
     };
 
     const logout = () => {
@@ -44,7 +39,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('currentUser');
     };
 
-    // Guarda el cambio en el usuario activo y en la lista general de usuarios
     const guardarUsuarioActual = (actualizado: Usuario) => {
         guardarUsuarios(getUsuarios().map(u => (u.rut === actualizado.rut ? actualizado : u)));
         localStorage.setItem('currentUser', JSON.stringify(actualizado));

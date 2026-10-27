@@ -4,14 +4,12 @@ import Avatar from "../atomos/Avatar";
 import { useAuth } from "../../context/AuthContext";
 import "../../estilos/MenuUsuario.css";
 
-// Burbuja con la foto del usuario en el navbar; al hacer clic abre su menú.
 function MenuUsuario() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [abierto, setAbierto] = useState(false);
     const contenedor = useRef<HTMLDivElement>(null);
 
-    // Cierra el menú al hacer clic fuera de él
     useEffect(() => {
         const alClickFuera = (e: MouseEvent) => {
             if (contenedor.current && !contenedor.current.contains(e.target as Node)) {

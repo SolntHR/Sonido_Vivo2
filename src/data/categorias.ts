@@ -1,5 +1,5 @@
 export interface Categoria {
-    nombre: string;      // debe coincidir con "categoria" en Coleccion.ts
+    nombre: string;
     descripcion: string;
     imagen: string;
 }

@@ -1,4 +1,3 @@
-/* Tema "Luxury" de Sonido Vivo (dorado sobre negro) */
 :root {
   --gold: #d4af37;
   --gold-hover: #f0cf65;
@@ -41,14 +40,9 @@
 
 .navbar-toggler.border-gold:focus { box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.4); }
 
-/* ============================================================
-   Zona pública (fondo oscuro): texto más brillante y cards traslúcidas.
-   Todo va dentro de .bg-patron-infinito para no afectar el panel admin.
-   ============================================================ */
 .bg-patron-infinito {
   color: #f2f2f2;
 }
-
 .bg-patron-infinito h1,
 .bg-patron-infinito h2,
 .bg-patron-infinito h3,
@@ -57,31 +51,25 @@
 .bg-patron-infinito h6 {
   color: #ffffff;
 }
-
 .bg-patron-infinito p,
 .bg-patron-infinito label,
 .bg-patron-infinito li,
 .bg-patron-infinito small {
   color: #e8e8e8;
 }
-
 .bg-patron-infinito .text-secondary,
 .bg-patron-infinito .text-muted {
   color: #c4c4c4 !important;
 }
-
 .bg-patron-infinito a:not(.btn):not(.nav-link):not(.navbar-brand):not(.tarjeta-categoria) {
   color: var(--gold);
 }
 .bg-patron-infinito a:not(.btn):not(.nav-link):not(.navbar-brand):not(.tarjeta-categoria):hover {
   color: var(--gold-hover);
 }
-
 .bg-patron-infinito .nav-link { color: #f2f2f2; }
 .bg-patron-infinito .nav-link:hover,
 .bg-patron-infinito .nav-link:focus { color: var(--gold); }
-
-/* Cards traslúcidas */
 .bg-patron-infinito .card {
   background: rgba(20, 20, 20, 0.55);
   backdrop-filter: blur(10px);
@@ -96,15 +84,11 @@
 }
 .bg-patron-infinito .card .card-title,
 .bg-patron-infinito .card .card-text { color: #fff; }
-
-/* Las tarjetas de categoría ya tienen su propio fondo con imagen */
 .bg-patron-infinito .tarjeta-categoria {
   background: #000;
   backdrop-filter: none;
   border: 0;
 }
-
-/* Formularios sobre fondo oscuro */
 .bg-patron-infinito .form-control,
 .bg-patron-infinito .form-select {
   background-color: rgba(255, 255, 255, 0.08);
@@ -125,8 +109,6 @@
   color: #cfcfcf;
 }
 .bg-patron-infinito .form-select option { background: #1a1a1a; color: #fff; }
-
-/* Botones primarios/secundarios en versión dorada */
 .bg-patron-infinito .btn-primary {
   background-color: var(--gold);
   border-color: var(--gold);
@@ -145,29 +127,21 @@
   color: #fff;
 }
 .bg-patron-infinito .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.15); color: #fff; }
-
 .bg-patron-infinito .alert { backdrop-filter: blur(6px); }
-
 .checkbox-oscuro {
     background-color: #212529 !important;
     border-color: #d4af37 !important;
     cursor: pointer;
 }
-
-/* Cuando el usuario hace clic y se marca */
 .checkbox-oscuro:checked {
-    background-color: #d4af37 !important; /* Fondo dorado al seleccionar */
+    background-color: #d4af37 !important;
     border-color: #d4af37 !important;
-    /* Hace que el "check" (el tick) sea de color oscuro para que se lea sobre el dorado */
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23212529' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
 }
-
-/* Asegura que el texto de las etiquetas tenga el cursor de manito */
 .form-check-label {
     cursor: pointer;
     user-select: none;
 }
-
 .img-noticia {
     height: 200px;
     width: 100%;

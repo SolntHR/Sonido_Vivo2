@@ -1,6 +1,5 @@
 import CampoFormulario from '../moleculas/CampoFormulario';
 
-// Tipado estricto para el formulario
 export interface UsuarioFormData {
     rut: string;
     nombre: string;
@@ -13,7 +12,7 @@ interface Props {
     form: UsuarioFormData;
     errores: Record<string, string>;
     usuarioEditando: string | null;
-    handleChange: (campo: string, valor: string) => void;
+    handleChange: (campo: keyof UsuarioFormData, valor: string) => void;
     handleSubmit: (e: React.FormEvent) => void;
     limpiarFormulario: () => void;
 }
@@ -25,53 +24,55 @@ function FormularioUsuario({ form, errores, usuarioEditando, handleChange, handl
             <h5 className="mb-0">{usuarioEditando ? "Editar Usuario" : "Agregar Nuevo Usuario"}</h5>
         </div>
         <div className="card-body">
-            <form onSubmit={handleSubmit} noValidate>
-            <CampoFormulario 
-                etiqueta="RUT (con o sin puntos y guion)" 
-                tipo="text" 
-                nombre="rut" 
-                valor={form.rut} 
-                alCambiar={(v) => handleChange('rut', v)} 
-                error={errores.rut} 
+            <form onSubmit={handleSubmit} noValidate aria-label="Formulario de usuario">
+            <CampoFormulario
+                etiqueta="RUT (con o sin puntos y guion)"
+                tipo="text"
+                nombre="rut"
+                valor={form.rut}
+                alCambiar={(v) => handleChange('rut', v)}
+                error={errores.rut}
             />
-            <CampoFormulario 
-                etiqueta="Nombre Completo" 
-                tipo="text" 
-                nombre="nombre" 
-                valor={form.nombre} 
-                alCambiar={(v) => handleChange('nombre', v)} 
-                error={errores.nombre} 
+            <CampoFormulario
+                etiqueta="Nombre Completo"
+                tipo="text"
+                nombre="nombre"
+                valor={form.nombre}
+                alCambiar={(v) => handleChange('nombre', v)}
+                error={errores.nombre}
             />
-            <CampoFormulario 
-                etiqueta="Correo Electrónico" 
-                tipo="email" 
-                nombre="correo" 
-                valor={form.correo} 
-                alCambiar={(v) => handleChange('correo', v)} 
-                error={errores.correo} 
+            <CampoFormulario
+                etiqueta="Correo Electrónico"
+                tipo="email"
+                nombre="correo"
+                valor={form.correo}
+                alCambiar={(v) => handleChange('correo', v)}
+                error={errores.correo}
             />
-            
+
             {!usuarioEditando && (
-                <CampoFormulario 
-                etiqueta="Contraseña" 
-                tipo="password" 
-                nombre="password" 
-                valor={form.password || ''} 
+                <CampoFormulario
+                etiqueta="Contraseña"
+                tipo="password"
+                nombre="password"
+                valor={form.password || ''}
                 alCambiar={(v) => handleChange('password', v)}
                 error={errores.password}
                 />
             )}
 
             <div className="mb-3">
-                <label className="form-label">Rol</label>
-                <select 
-                className="form-select" 
-                value={form.rol} 
+                <label className="form-label" htmlFor="campo-rol">Rol</label>
+                <select
+                id="campo-rol"
+                className={`form-select ${errores.rol ? 'is-invalid' : ''}`}
+                value={form.rol}
                 onChange={(e) => handleChange('rol', e.target.value)}
                 >
                 <option value="Cliente">Cliente</option>
                 <option value="Administrador">Administrador</option>
                 </select>
+                {errores.rol && <div className="invalid-feedback d-block" role="alert">{errores.rol}</div>}
             </div>
 
             <div className="d-grid gap-2 mt-4">
@@ -79,7 +80,7 @@ function FormularioUsuario({ form, errores, usuarioEditando, handleChange, handl
                 {usuarioEditando ? "Actualizar Cambios" : "Guardar Usuario"}
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={limpiarFormulario}>
-                Limpiar
+                {usuarioEditando ? "Cancelar edición" : "Limpiar"}
                 </button>
             </div>
             </form>

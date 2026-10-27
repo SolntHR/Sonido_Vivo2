@@ -1,12 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import type { Producto } from '../data/db';
+import { leerJSON, type Producto } from '../data/db';
 import { CartContext, type CartItem } from './CartContext';
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [aviso, setAviso] = useState<string | null>(null);
     const [carrito, setCarrito] = useState<CartItem[]>(() => {
-        const guardado = localStorage.getItem('carritoSonidoVivo');
-        return guardado ? JSON.parse(guardado) : [];
+        const guardado = leerJSON<CartItem[]>('carritoSonidoVivo');
+        return Array.isArray(guardado) ? guardado : [];
     });
 
     useEffect(() => {
@@ -14,6 +15,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }, [carrito]);
 
     const agregarAlCarrito = (producto: Producto) => {
+        const enCarrito = carrito.find(item => item.codigo === producto.codigo)?.cantidad ?? 0;
+        setIsOpen(true);
+        if (enCarrito >= producto.stock) {
+            setAviso(producto.stock <= 0
+                ? `${producto.nombreproducto ?? producto.codigo} está agotado.`
+                : `Solo hay ${producto.stock} unidad(es) disponibles de ${producto.nombreproducto ?? producto.codigo}.`);
+            return false;
+        }
+
         setCarrito(prev => {
             const existe = prev.find(item => item.codigo === producto.codigo);
             if (existe) {
@@ -25,11 +35,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             }
             return [...prev, { ...producto, cantidad: 1 }];
         });
-        setIsOpen(true);
+        setAviso(null);
+        return true;
     };
 
     const eliminarDelCarrito = (codigo: string) => {
         setCarrito(prev => prev.filter(item => item.codigo !== codigo));
+        setAviso(null);
     };
 
     const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
@@ -40,8 +52,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 carrito,
                 isOpen,
+                aviso,
                 abrirCarrito: () => setIsOpen(true),
-                cerrarCarrito: () => setIsOpen(false),
+                cerrarCarrito: () => { setIsOpen(false); setAviso(null); },
                 agregarAlCarrito,
                 eliminarDelCarrito,
                 cantidadTotal,

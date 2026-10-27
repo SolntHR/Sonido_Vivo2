@@ -13,7 +13,7 @@ function ItemCarrito({ item }: Props) {
         <li className="list-group-item list-group-item-luxury d-flex justify-content-between align-items-center lh-sm bg-transparent border-secondary">
             <div className="d-flex align-items-center gap-3">
                 <img
-                    src={item.imagen || '/img/default.png'}
+                    src={item.imagen || '/img/logosonidovivo.png'}
                     alt={item.nombreproducto ?? item.codigo}
                     className="rounded border border-secondary"
                     style={{ width: 64, height: 64, objectFit: 'contain' }}
@@ -25,10 +25,12 @@ function ItemCarrito({ item }: Props) {
             </div>
             <div className="d-flex align-items-center">
                 <span className="me-3 fw-bold text-gold">${subtotal.toLocaleString('es-CL')}</span>
-                <button 
-                    className="btn btn-sm btn-outline-danger" 
+                <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger"
                     onClick={() => eliminarDelCarrito(item.codigo)}
                     title="Eliminar producto"
+                    aria-label={`Eliminar ${item.nombreproducto ?? item.codigo} del carrito`}
                 >
                     X
                 </button>

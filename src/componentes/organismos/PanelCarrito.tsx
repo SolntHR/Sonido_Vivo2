@@ -4,23 +4,22 @@ import ItemCarrito from '../moleculas/ItemCarrito';
 import '../../estilos/PanelCarrito.css';
 
 function PanelCarrito() {
-    const { isOpen, cerrarCarrito, carrito, total } = useCart();
+    const { isOpen, cerrarCarrito, carrito, total, aviso } = useCart();
 
     if (!isOpen) return null;
 
     return (
         <>
-            {/* Fondo oscuro al abrir el offcanvas */}
             <div className="offcanvas-backdrop fade show" onClick={cerrarCarrito}></div>
-            
-            {/* Panel lateral */}
-            <div className="offcanvas offcanvas-end offcanvas-luxury show" style={{ visibility: 'visible' }} tabIndex={-1}>
+
+            <div className="offcanvas offcanvas-end offcanvas-luxury show" style={{ visibility: 'visible' }} tabIndex={-1} role="dialog" aria-label="Carrito de compras">
                 <div className="offcanvas-header">
                     <h5 className="offcanvas-title text-gold">Tu Selección</h5>
-                    <button type="button" className="btn-close btn-close-white" onClick={cerrarCarrito}></button>
+                    <button type="button" className="btn-close btn-close-white" onClick={cerrarCarrito} aria-label="Cerrar carrito"></button>
                 </div>
-                
+
                 <div className="offcanvas-body d-flex flex-column">
+                    {aviso && <div className="alert alert-warning py-2" role="alert">{aviso}</div>}
                     {carrito.length === 0 ? (
                         <p className="text-secondary text-center mt-4">Tu carrito está vacío.</p>
                     ) : (

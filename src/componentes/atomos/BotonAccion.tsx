@@ -12,6 +12,7 @@ function BotonAccion({ icono, onClick, color, title }: Props) {
         className={`btn btn-sm btn-outline-${color} me-1`} 
         onClick={onClick}
         title={title}
+        aria-label={title}
         >
         {icono}
         </button>

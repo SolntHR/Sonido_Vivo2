@@ -14,7 +14,7 @@ function SelectorFoto({ nombre, foto, alCambiar }: SelectorFotoProps) {
 
     const alElegir = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const archivo = e.target.files?.[0];
-        e.target.value = ""; // permite volver a elegir el mismo archivo
+        e.target.value = "";
         if (!archivo) return;
         try {
             alCambiar(await procesarFoto(archivo));

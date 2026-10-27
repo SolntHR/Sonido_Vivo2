@@ -6,7 +6,6 @@ interface ZonaScrollProps {
     onSalir: () => void;
 }
 
-// Zona invisible en el borde del carrusel: al pasar el mouse, el carrusel se desplaza.
 function ZonaScroll({ lado, onEntrar, onSalir }: ZonaScrollProps) {
     return (
         <div

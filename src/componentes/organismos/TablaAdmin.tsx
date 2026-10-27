@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 type Props = {
     columnas: string[];
-    children: ReactNode; // Aquí irán los <tr> de cada fila
+    children: ReactNode;
     mensajeVacio: string;
     hayDatos: boolean;
 };

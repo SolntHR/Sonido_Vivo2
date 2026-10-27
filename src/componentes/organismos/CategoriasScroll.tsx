@@ -8,7 +8,6 @@ function CategoriasScroll() {
     const contenedor = useRef<HTMLDivElement>(null);
     const frame = useRef<number | null>(null);
 
-    // Desplaza el carrusel de forma continua mientras el mouse está sobre la zona.
     const iniciar = (direccion: 1 | -1) => {
         const paso = () => {
             contenedor.current?.scrollBy({ left: direccion * 8 });

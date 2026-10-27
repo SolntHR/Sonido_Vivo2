@@ -15,36 +15,32 @@ function NoticiaDetalle() {
         );
     }
 
-    const fechaFormateada = new Date(noticia.fecha + "T00:00:00").toLocaleDateString("es-CL", { 
-        day: "numeric", month: "long", year: "numeric" 
+    const fechaFormateada = new Date(noticia.fecha + "T00:00:00").toLocaleDateString("es-CL", {
+        day: "numeric", month: "long", year: "numeric"
     });
 
     return (
         <div className="container my-5" style={{ maxWidth: "900px" }}>
-            {/* Breadcrumbs */}
-            <div className="mb-4 small">
-                <Link to="/noticias" className="text-secondary text-decoration-none">Blog</Link>
+            <nav aria-label="breadcrumb" className="mb-4 small">
+                <Link to="/noticias" className="text-secondary text-decoration-none">Noticias</Link>
                 <span className="text-secondary mx-2">/</span>
-                <span className="text-gold">Guías</span>
-            </div>
+                <span className="text-gold" aria-current="page">{noticia.titulo}</span>
+            </nav>
 
-            {/* Cabecera de la Noticia */}
             <h1 className="display-5 fw-bold text-white mb-3">{noticia.titulo}</h1>
             <p className="text-secondary mb-4">
                 Por <span className="text-light fw-medium">{noticia.autor}</span> | Publicado el {fechaFormateada}
             </p>
 
-            {/* Imagen Principal */}
             <div className="mb-5 text-center">
-                <img 
-                    src={noticia.imagen} 
-                    alt={noticia.titulo} 
-                    className="img-fluid rounded border border-gold border-2" 
+                <img
+                    src={noticia.imagen}
+                    alt={noticia.titulo}
+                    className="img-fluid rounded border border-gold border-2"
                     style={{ width: "100%", maxHeight: "450px", objectFit: "cover" }}
                 />
             </div>
 
-            {/* Cuerpo de la Noticia */}
             <div className="fs-5 lh-lg text-light mb-5" style={{ textAlign: "justify" }}>
                 <p className="mb-4 fw-medium">{noticia.resumen}</p>
                 {noticia.contenido.map((parrafo, index) => (
@@ -52,7 +48,6 @@ function NoticiaDetalle() {
                 ))}
             </div>
 
-            {/* Recuadro Final (Call to Action) */}
             <div className="card bg-black border-gold border-2 text-center py-5 px-4 mb-4">
                 <h4 className="text-gold fw-bold mb-3">¿Te inspiraste?</h4>
                 <p className="text-light mb-4">Revisa nuestro catálogo para encontrar el equipamiento ideal para tu sonido.</p>

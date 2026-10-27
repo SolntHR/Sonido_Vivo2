@@ -23,9 +23,11 @@ function Noticias() {
                                     <small className="text-gold text-uppercase fw-bold">
                                         {new Date(n.fecha + "T00:00:00").toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" })}
                                     </small>
-                                    <h5 className="card-title mt-2">{n.titulo}</h5>
-                                    <Link to={`/noticias/${n.id}`} className="text-white text-decoration-none">
-                                    </Link>
+                                    <h5 className="card-title mt-2">
+                                        <Link to={`/noticias/${n.id}`} className="text-white text-decoration-none">
+                                            {n.titulo}
+                                        </Link>
+                                    </h5>
                                     <p className="card-text mb-4 text-secondary flex-grow-1">{n.resumen}</p>
                                     <div className="mt-auto">
                                         <Link to={`/noticias/${n.id}`} className="btn btn-outline-gold w-100">

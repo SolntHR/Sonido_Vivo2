@@ -5,7 +5,6 @@ import { useCart } from "../../context/useCart";
 
 function ProductosDestacados() {
     const { agregarAlCarrito } = useCart();
-    // Un producto por categoría, para que la vitrina sea variada (máximo 4).
     const vistas = new Set<string>();
     const destacados = getProductos()
         .filter((p) => {
@@ -24,13 +23,10 @@ function ProductosDestacados() {
                     <div className="col-12 col-md-6 col-xl-3 d-flex justify-content-center" key={p.codigo}>
                         <CardProducto
                             codigo={p.codigo}
-                            categoria={p.categoria}
                             nombreproducto={p.nombreproducto ?? `${p.marca} ${p.modelo}`}
                             marca={p.marca}
-                            modelo={p.modelo}
                             stock={p.stock}
                             precio={p.precio}
-                            descripcion={p.descripcion}
                             imagen={p.imagen ?? ""}
                             onAgregarCarrito={() => agregarAlCarrito(p)}
                         />

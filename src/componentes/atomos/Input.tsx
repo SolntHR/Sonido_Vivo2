@@ -1,22 +1,25 @@
 type Props = {
     tipo: string;
     nombre: string;
-    valor: string; // valor actual del campo
-    alCambiar: (valor: string) => void; // funcion para actualizar el valor
+    valor: string;
+    alCambiar: (valor: string) => void;
     error?: string;
+    id?: string;
+    deshabilitado?: boolean;
 };
 
-function Input({tipo,nombre, valor, alCambiar, error}: Props){
+function Input({tipo, nombre, valor, alCambiar, error, id, deshabilitado = false}: Props){
     return(
         <input
+        id={id}
         type={tipo}
         name={nombre}
         className={`form-control ${error ? 'is-invalid' : ''}`}
+        aria-invalid={error ? true : undefined}
+        disabled={deshabilitado}
 
-        // muestra el valor guardado
         value={valor}
 
-        // detecta cuando el usuario escribe
         onChange={(e) => alCambiar(e.target.value)}
         />
     );

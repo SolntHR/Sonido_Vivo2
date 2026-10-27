@@ -8,9 +8,10 @@ export interface CartItem extends Producto {
 export interface CartContextType {
     carrito: CartItem[];
     isOpen: boolean;
+    aviso: string | null;
     abrirCarrito: () => void;
     cerrarCarrito: () => void;
-    agregarAlCarrito: (producto: Producto) => void;
+    agregarAlCarrito: (producto: Producto) => boolean;
     eliminarDelCarrito: (codigo: string) => void;
     cantidadTotal: number;
     total: number;

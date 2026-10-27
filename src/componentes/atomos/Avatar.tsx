@@ -3,10 +3,9 @@ import "../../estilos/Avatar.css";
 interface AvatarProps {
     nombre: string;
     foto?: string;
-    tamano?: number; // en píxeles
+    tamano?: number;
 }
 
-// Foto de perfil circular; si no hay foto, muestra las iniciales.
 function Avatar({ nombre, foto, tamano = 40 }: AvatarProps) {
     const iniciales = nombre
         .trim()

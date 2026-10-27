@@ -2,46 +2,38 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { useAuth } from '../../context/AuthContext';
-import { getUsuarios } from '../../data/db';
+import { validarEmail } from '../../data/validaciones';
 
 
 function FormularioLogin() {
 
-    // Estados para guardar los datos del formulario
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [errores, setErrores] = useState<{ correo?: string; contrasena?: string; general?: string }>({});
-    
+
     const { login } = useAuth();
     const navigate = useNavigate();
 
 
-    // Valida los datos al enviar el formulario
     const manejarLogin = (e: React.SubmitEvent<HTMLFormElement>) =>{
-        
-        e.preventDefault();// Evita recargar la pagina
+
+        e.preventDefault();
 
         const nuevosErrores: typeof errores = {};
         let esValido = true;
 
-    
-        //validacion correo
+
         if (correo.trim() === ""){
             nuevosErrores.correo = "Debe ingresar su correo";
             esValido = false;
-        }
-        // Comprueba que el corre otenga un formato válido
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)){
+        } else if (!validarEmail(correo.trim())){
             nuevosErrores.correo = "Ingrese un correo válido";
             esValido = false;
         }
-        // validacion contrasena
         if (contrasena.trim() === ""){
             nuevosErrores.contrasena = "Debe ingresar su contraseña";
             esValido = false;
-        }
-        // comprueba el largo de la contrasena
-        if (contrasena.length < 4){
+        } else if (contrasena.length < 4){
             nuevosErrores.contrasena = "La contraseña debe tener un mínimo de 4 caracteres";
             esValido = false;
         }
@@ -50,24 +42,19 @@ function FormularioLogin() {
             return;
         }
 
-        // Si pasa las validaciones, intentamos loguear con el Contexto
-        const exito = login(correo, contrasena);
-        
-        if (exito) {
+        const usuario = login(correo, contrasena);
+
+        if (usuario) {
             setErrores({});
-            // Administrador al panel; clientes a su perfil
-            const rol = getUsuarios().find(u => u.correo === correo)?.rol;
-            navigate(rol === "Administrador" ? "/admin" : "/perfil");
+            navigate(usuario.rol === "Administrador" ? "/admin" : "/perfil");
         } else {
             setErrores({ general: "Credenciales incorrectas. Verifique su correo y contraseña." });
         }
     };
-    
-
 
     return(
-        <form onSubmit={manejarLogin} noValidate>
-            {errores.general && (<div className="alert alert-danger py-2">{errores.general}</div>)}
+        <form onSubmit={manejarLogin} noValidate aria-label="Formulario de inicio de sesión">
+            {errores.general && (<div className="alert alert-danger py-2" role="alert">{errores.general}</div>)}
 
             <CampoFormulario
                 etiqueta="Correo electrónico"
@@ -87,7 +74,7 @@ function FormularioLogin() {
             />
 
             <button type="submit" className="btn btn-primary">
-                Iniciar sesion
+                Iniciar sesión
             </button>
 
         </form>

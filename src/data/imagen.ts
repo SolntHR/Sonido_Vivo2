@@ -1,4 +1,3 @@
-// Recorta la imagen a un cuadrado y la reduce, para que quepa en localStorage.
 export const procesarFoto = (archivo: File, tamano = 256): Promise<string> =>
     new Promise((resolve, reject) => {
         if (!archivo.type.startsWith("image/")) {

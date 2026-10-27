@@ -4,29 +4,33 @@ type Props = {
     etiqueta : string;
     tipo: string;
     nombre: string;
-    valor: string; // valor actual del campo
-    alCambiar: (valor: string) => void; // funcion para actualizar el valor
+    valor: string;
+    alCambiar: (valor: string) => void;
     error?: string;
+    deshabilitado?: boolean;
 };
 
-function CampoFormulario({etiqueta, tipo, nombre, valor, alCambiar, error}: Props){
+function CampoFormulario({etiqueta, tipo, nombre, valor, alCambiar, error, deshabilitado}: Props){
+    const id = `campo-${nombre}`;
+
     return(
         <div className="mb-3">
 
-            <label className="form-label">
+            <label className="form-label" htmlFor={id}>
                 {etiqueta}
             </label>
-        
+
             <Input
+            id={id}
             tipo={tipo}
             nombre={nombre}
             valor={valor}
             alCambiar={alCambiar}
             error={error}
+            deshabilitado={deshabilitado}
             />
 
-            {/* Muestra el mensaje de error de Bootstrap solo si existe */}
-            {error && <div className="invalid-feedback d-block">{error}</div>}
+            {error && <div className="invalid-feedback d-block" role="alert">{error}</div>}
 
         </div>
     );

@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
-// plantillas
 import LayoutPublico from './componentes/organismos/LayoutPublico';
 import LayoutAdmin from './componentes/organismos/LayoutAdmin';
 import { RutaProtegida } from './rutas/RutaProtegida';
-// vista publica
 import InicioPublico from './paginas/InicioPublico'
 import Productos from './paginas/Productos'
 import DetalleProducto from './paginas/DetalleProducto'
@@ -15,7 +13,6 @@ import Registro from './paginas/Registro';
 import Noticias from './paginas/Noticias'
 import Perfil from './paginas/Perfil'
 import CarritoFinal from './paginas/CarritoFinal'
-// admin
 import InicioAdmin from './paginas/InicioAdmin'
 import AdminUsuarios from './paginas/AdminUsuarios'
 import AdminMantenedor from './paginas/AdminMantenedor'
@@ -28,7 +25,7 @@ function App() {
         <Routes>
 
           <Route element={<LayoutPublico/>}>
-            
+
             <Route
               path="/"
               element={<InicioPublico/>}
@@ -46,7 +43,6 @@ function App() {
               path="/carrito"
               element={<CarritoFinal/>}
             />
-            {/* Ruta dinamica para mostrar el detalle seun el id del producto*/}
             <Route
               path='/producto/:codigo'
               element={<DetalleProducto/>}
@@ -56,7 +52,7 @@ function App() {
               path="/contacto"
               element={<Contacto/>}
             />
-            
+
             <Route
               path="/quienes"
               element={<Quienes/>}
@@ -81,20 +77,18 @@ function App() {
               path="/noticias/:id"
               element={<NoticiaDetalle/>}
             />
-            {/* Ruta antigua: redirige para no romper links viejos */}
             <Route
               path="/novedades"
               element={<Navigate to="/noticias" replace />}
             />
 
-            {/* Perfil: solo para usuarios con sesión iniciada */}
             <Route element={<RutaProtegida />}>
               <Route path="/perfil" element={<Perfil />} />
             </Route>
           </Route>
 
           <Route element={<RutaProtegida rol="Administrador" />}>
-        
+
             <Route element={<LayoutAdmin />}>
               <Route path="/admin" element={<InicioAdmin />} />
               <Route path="/admin/usuarios" element={<AdminUsuarios />} />

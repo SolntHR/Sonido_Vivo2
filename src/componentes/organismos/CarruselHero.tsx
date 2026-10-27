@@ -10,7 +10,6 @@ const slides = [
 function CarruselHero() {
     const [actual, setActual] = useState(0);
 
-    // Cambia de slide cada 5 segundos; se reinicia al cambiar manualmente.
     useEffect(() => {
         const id = setInterval(() => setActual((a) => (a + 1) % slides.length), 5000);
         return () => clearInterval(id);
