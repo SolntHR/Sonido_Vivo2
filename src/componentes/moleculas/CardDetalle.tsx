@@ -4,7 +4,7 @@ import BotonAgregar from "../atomos/BotonAgregar";
 
 interface Props {
     producto: Producto;
-    onAgregarCarrito: (producto: Producto) => void;
+    onAgregarCarrito: (producto: Producto) => unknown;
 }
 
 function CardDetalle({producto, onAgregarCarrito}: Props){
