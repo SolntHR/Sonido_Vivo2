@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext.tsx'
 import { CartProvider } from './context/CartProvider'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'leaflet/dist/leaflet.css'
 import './estilos/tema.css'
 import App from './App.tsx'
 

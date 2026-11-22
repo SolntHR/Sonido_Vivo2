@@ -2,6 +2,8 @@ import { useState } from "react";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import { leerJSON } from "../data/db";
 import { validarEmail } from "../data/validaciones";
+import MapaTienda from "../componentes/moleculas/MapaTienda";
+import { TIENDA } from "../data/tienda";
 
 const Contacto = () => {
     const [form, setForm] = useState({ nombre: "", correo: "", mensaje: "" });
@@ -51,8 +53,10 @@ const Contacto = () => {
                         <h4 className="text-gold mb-3">Información</h4>
                         <p className="mb-1 fw-bold">Correo</p>
                         <p>contacto@sonidovivo.cl</p>
+                        <p className="mb-1 fw-bold">Dirección</p>
+                        <p>{TIENDA.direccion}, {TIENDA.comuna}</p>
                         <p className="mb-1 fw-bold">Atención</p>
-                        <p className="mb-0">Lunes a viernes, 10:00 a 19:00 hrs</p>
+                        <p className="mb-0">{TIENDA.horario}</p>
                     </div>
                 </div>
 
@@ -76,6 +80,16 @@ const Contacto = () => {
                             </div>
                             <button type="submit" className="btn btn-primary">Enviar mensaje</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row justify-content-center mt-4">
+                <div className="col-12 col-lg-10">
+                    <div className="card p-4 text-start">
+                        <h4 className="text-gold mb-3">Dónde estamos</h4>
+                        <p>Visítanos en nuestra tienda física. También es nuestro punto de retiro de pedidos.</p>
+                        <MapaTienda alto={320} />
                     </div>
                 </div>
             </div>

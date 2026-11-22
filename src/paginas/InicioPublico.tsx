@@ -1,3 +1,4 @@
+import MapaTienda from "../componentes/moleculas/MapaTienda";
 import CarruselHero from "../componentes/organismos/CarruselHero";
 import CategoriasScroll from "../componentes/organismos/CategoriasScroll";
 import ProductosDestacados from "../componentes/organismos/ProductosDestacados";
@@ -26,6 +27,18 @@ function InicioPublico() {
             </section>
 
             <ProductosDestacados />
+
+            <section className="container mb-5 pb-5">
+                <div className="row justify-content-center">
+                    <div className="col-12 col-lg-10">
+                        <div className="card p-4 text-start">
+                            <h4 className="text-gold mb-3">Dónde estamos</h4>
+                            <p>Visítanos en nuestra tienda física. También es nuestro punto de retiro de pedidos.</p>
+                            <MapaTienda alto={320} />
+                        </div>
+                    </div>
+                </div>
+            </section>
         </>
     );
 }
