@@ -1,16 +1,34 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getProductos, getUsuarios } from "../data/db";
+import { listarProductos } from "../api/productos";
+import { listarUsuarios } from "../api/usuarios";
+import type { Producto, Usuario } from "../api/tipos";
 import { useAuth } from "../context/AuthContext";
 
 const InicioAdmin = () => {
     const { user } = useAuth();
-    const productos = getProductos();
-    const usuarios = getUsuarios();
-    const sinStock = productos.filter((p) => p.stock === 0).length;
+    // Datos reales del backend: GET /productos y GET /usuarios
+    const [productos, setProductos] = useState<Producto[] | null>(null);
+    const [usuarios, setUsuarios] = useState<Usuario[] | null>(null);
 
+    useEffect(() => {
+        Promise.all([listarProductos(), listarUsuarios()])
+            .then(([listaProductos, listaUsuarios]) => {
+                setProductos(listaProductos);
+                setUsuarios(listaUsuarios);
+            })
+            .catch(() => {
+                setProductos([]);
+                setUsuarios([]);
+            });
+    }, []);
+
+    const sinStock = productos ? productos.filter((p) => p.stock === 0).length : 0;
+
+    // Mientras carga se muestra "…"
     const resumen = [
-        { titulo: "Productos", valor: productos.length, to: "/admin/mantenedor", boton: "Gestionar productos" },
-        { titulo: "Usuarios", valor: usuarios.length, to: "/admin/usuarios", boton: "Gestionar usuarios" },
+        { titulo: "Productos", valor: productos ? productos.length : "…", to: "/admin/mantenedor", boton: "Gestionar productos" },
+        { titulo: "Usuarios", valor: usuarios ? usuarios.length : "…", to: "/admin/usuarios", boton: "Gestionar usuarios" },
     ];
 
     return (

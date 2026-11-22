@@ -1,4 +1,3 @@
-import type { Producto, Usuario } from './db';
 
 export const normalizarTexto = (texto: string): string =>
     texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -8,7 +7,21 @@ export interface FiltroProductos {
     texto?: string;
 }
 
-export const filtrarProductos = (productos: Producto[], { categorias = [], texto = '' }: FiltroProductos): Producto[] => {
+interface ProductoFiltrable {
+    codigo: string;
+    categoria: string;
+    nombreproducto?: string;
+    marca: string;
+    modelo: string;
+}
+
+interface UsuarioFiltrable {
+    rut: string;
+    nombre: string;
+    correo: string;
+}
+
+export const filtrarProductos = <T extends ProductoFiltrable>(productos: T[], { categorias = [], texto = '' }: FiltroProductos): T[] => {
     const busqueda = normalizarTexto(texto);
     return productos.filter(p => {
         if (categorias.length > 0 && !categorias.includes(p.categoria)) return false;
@@ -18,7 +31,7 @@ export const filtrarProductos = (productos: Producto[], { categorias = [], texto
     });
 };
 
-export const filtrarUsuarios = (usuarios: Usuario[], texto: string): Usuario[] => {
+export const filtrarUsuarios = <T extends UsuarioFiltrable>(usuarios: T[], texto: string): T[] => {
     const busqueda = normalizarTexto(texto);
     if (!busqueda) return usuarios;
     const rutBuscado = busqueda.replace(/[.\-\s]/g, '');

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { leerJSON, type Producto } from '../data/db';
+import { leerJSON } from '../data/db';
+import type { Producto } from '../api/tipos';
 import { CartContext, type CartItem } from './CartContext';
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {

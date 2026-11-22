@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CardProducto from "../componentes/moleculas/CardProducto";
-import { categorias } from "../data/categorias";
-import { getProductos } from "../data/db";
+import { listarProductos } from "../api/productos";
+import { listarCategorias } from "../api/categorias";
+import type { Categoria, Producto } from "../api/tipos";
 import { filtrarProductos } from "../data/filtros";
 import { useCart } from "../context/useCart";
 
@@ -10,7 +11,22 @@ function Productos(){
     const { agregarAlCarrito } = useCart();
     const [params] = useSearchParams();
     const categoriaURL = params.get("categoria");
-    const [listaProductos] = useState(() => getProductos());
+    // Datos que vienen del backend (GET /productos y GET /categorias)
+    const [listaProductos, setListaProductos] = useState<Producto[]>([]);
+    const [categorias, setCategorias] = useState<Categoria[]>([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Consulta el backend al abrir la página
+    useEffect(() => {
+        Promise.all([listarProductos(), listarCategorias()])
+            .then(([productos, cats]) => {
+                setListaProductos(productos);
+                setCategorias(cats);
+            })
+            .catch((e: Error) => setError(e.message))
+            .finally(() => setCargando(false));
+    }, []);
     const [busqueda, setBusqueda] = useState("");
     const [seleccion, setSeleccion] = useState<{ url: string | null; categorias: string[] | null }>({ url: categoriaURL, categorias: null });
     const seleccionCategorias = seleccion.url === categoriaURL ? seleccion.categorias : null;
@@ -74,11 +90,16 @@ function Productos(){
                 </div>
             </div>
 
+            {cargando && <p className="text-secondary">Cargando productos...</p>}
+            {error && <div className="alert alert-danger">No se pudo cargar el catálogo: {error}</div>}
+
+            {!cargando && !error && (
             <p className="text-secondary small" aria-live="polite">
                 {productosFiltrados.length} producto(s) encontrado(s)
             </p>
+            )}
 
-            {productosFiltrados.length > 0 ? (
+            {cargando || error ? null : productosFiltrados.length > 0 ? (
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 mb-5">
                     {productosFiltrados.map((producto) => (
                         <div className="col d-flex justify-content-center" key={producto.codigo}>

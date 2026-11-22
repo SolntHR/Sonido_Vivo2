@@ -8,6 +8,7 @@ function CambiarPassword() {
     const [form, setForm] = useState({ actual: "", nueva: "", confirmar: "" });
     const [errores, setErrores] = useState<Record<string, string>>({});
     const [exito, setExito] = useState(false);
+    const [enviando, setEnviando] = useState(false);
 
     const cambiar = (campo: string, valor: string) => {
         setForm((f) => ({ ...f, [campo]: valor }));
@@ -15,7 +16,7 @@ function CambiarPassword() {
         setExito(false);
     };
 
-    const enviar = (e: React.FormEvent) => {
+    const enviar = async (e: React.FormEvent) => {
         e.preventDefault();
         const nuevos: Record<string, string> = {};
         if (!form.actual) nuevos.actual = "Ingresa tu contraseña actual.";
@@ -31,7 +32,10 @@ function CambiarPassword() {
             setErrores(nuevos);
             return;
         }
-        const error = cambiarPassword(form.actual, form.nueva);
+        setEnviando(true);
+        // PATCH /usuarios/perfil/password: El backend verifica la contraseña actual
+        const error = await cambiarPassword(form.actual, form.nueva);
+        setEnviando(false);
         if (error) {
             setErrores({ actual: error });
             return;
@@ -46,7 +50,7 @@ function CambiarPassword() {
             <CampoFormulario etiqueta="Contraseña actual" tipo="password" nombre="actual" valor={form.actual} alCambiar={(v) => cambiar("actual", v)} error={errores.actual} />
             <CampoFormulario etiqueta="Nueva contraseña" tipo="password" nombre="nueva" valor={form.nueva} alCambiar={(v) => cambiar("nueva", v)} error={errores.nueva} />
             <CampoFormulario etiqueta="Confirmar nueva contraseña" tipo="password" nombre="confirmar" valor={form.confirmar} alCambiar={(v) => cambiar("confirmar", v)} error={errores.confirmar} />
-            <button type="submit" className="btn btn-primary">Cambiar contraseña</button>
+            <button type="submit" className="btn btn-primary disabled={enviando}">{enviando ? "Guardando..." : "Cambiar contraseña"}</button>
         </form>
     );
 }

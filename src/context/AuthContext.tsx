@@ -1,68 +1,129 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { getUsuarios, guardarUsuarios, leerJSON } from '../data/db';
-import type { Usuario } from '../data/db';
+import type { Usuario } from '../api/tipos';
+import { iniciarSesion } from '../api/auth';
+import { cambiarPassword as cambiarPasswordApi, editarPerfil, obtenerPerfil } from '../api/usuarios';
+import type { CambiosPerfil } from '../api/usuarios';
+import { borrarToken, ErrorApi, guardarToken, leerToken } from '../api/cliente';
 
-export type CambiosPerfil = Partial<Pick<Usuario, 'nombre' | 'telefono' | 'region' | 'comuna' | 'foto'>>;
+export type { CambiosPerfil };
+
+const CLAVE_USUARIO = 'usuarioSonidoVivo';
+const CLAVE_EXPIRA = 'expiraSonidoVivo';
 
 interface AuthContextType {
     user: Usuario | null;
-    login: (correo: string, password: string) => Usuario | null;
+    login: (correo: string, password: string) => Promise<Usuario>;
     logout: () => void;
-    actualizarPerfil: (cambios: CambiosPerfil) => void;
-    cambiarPassword: (actual: string, nueva: string) => string | null;
+    actualizarPerfil: (cambios: CambiosPerfil) => Promise<void>;
+    cambiarPassword: (actual: string, nueva: string) => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<Usuario | null>(() => {
-        const guardado = leerJSON<Usuario>('currentUser');
-        if (!guardado?.rut) return null;
-        return getUsuarios().find(u => u.rut === guardado.rut && u.activo !== false) ?? null;
-    });
+// Sesión guardada en el navegador
 
-    const login = (correo: string, password: string) => {
-        const usuarios = getUsuarios();
-        const correoNormalizado = correo.trim().toLowerCase();
-        const found = usuarios.find(u =>
-            u.correo.toLowerCase() === correoNormalizado && u.password === password && u.activo !== false
-        );
-        if (!found) return null;
-        setUser(found);
-        localStorage.setItem('currentUser', JSON.stringify(found));
-        return found;
+const limpiarSesion = () => {
+    borrarToken();
+    localStorage.removeItem(CLAVE_USUARIO);
+    localStorage.removeItem(CLAVE_EXPIRA);
+};
+
+const guardarUsuario = (usuario: Usuario) => localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
+
+// Recupera la sesión al recargar la página, solo si el token existe y no ha vencido
+const leerSesionGuardada = (): Usuario | null => {
+    const token = leerToken();
+    const expira = Number(localStorage.getItem(CLAVE_EXPIRA));
+    const guardado = localStorage.getItem(CLAVE_USUARIO);
+    if (!token || !guardado || !expira || Date.now() >= expira) {
+        limpiarSesion();
+        return null;
+    }
+    try {
+        return JSON.parse(guardado) as Usuario;
+    } catch {
+        limpiarSesion();
+        return null;
+    }
+};
+
+// Proveedor
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState<Usuario | null>(leerSesionGuardada);
+
+    // Al abrir la página: escucha el aviso de sesión vencida (401) y confirma la sesión con el backend
+    useEffect(() => {
+        const cerrarPorExpiracion = () => {
+            limpiarSesion();
+            setUser(null);
+        };
+        window.addEventListener('sesion-expirada', cerrarPorExpiracion);
+
+        if (leerToken()) {
+            obtenerPerfil()
+                .then((perfil) => {
+                    guardarUsuario(perfil);
+                    setUser(perfil);
+                })
+                .catch((error) => {
+                    // 404: la cuenta ya no existe. El 401 lo maneja el evento 'sesion-expirada'
+                    if (error instanceof ErrorApi && error.status === 404) cerrarPorExpiracion();
+                });
+        }
+        return () => window.removeEventListener('sesion-expirada', cerrarPorExpiracion);
+    }, []);
+
+    // Cierra la sesión automáticamente cuando el token vence
+    useEffect(() => {
+        if (!user) return;
+        const restante = Number(localStorage.getItem(CLAVE_EXPIRA)) - Date.now();
+        const temporizador = setTimeout(() => {
+            limpiarSesion();
+            setUser(null);
+        }, Math.max(restante, 0));
+        return () => clearTimeout(temporizador);
+    }, [user]);
+
+    const login = async (correo: string, password: string) => {
+        const respuesta = await iniciarSesion(correo.trim(), password);
+        guardarToken(respuesta.token);
+        localStorage.setItem(CLAVE_EXPIRA, String(Date.now() + respuesta.expiraEnSegundos * 1000));
+        guardarUsuario(respuesta.usuario);
+        setUser(respuesta.usuario);
+        return respuesta.usuario;
     };
 
     const logout = () => {
+        limpiarSesion();
         setUser(null);
-        localStorage.removeItem('currentUser');
     };
 
-    const guardarUsuarioActual = (actualizado: Usuario) => {
-        guardarUsuarios(getUsuarios().map(u => (u.rut === actualizado.rut ? actualizado : u)));
-        localStorage.setItem('currentUser', JSON.stringify(actualizado));
+    const actualizarPerfil = async (cambios: CambiosPerfil) => {
+        const actualizado = await editarPerfil(cambios);
+        guardarUsuario(actualizado);
         setUser(actualizado);
     };
 
-    const actualizarPerfil = (cambios: CambiosPerfil) => {
-        if (!user) return;
-        guardarUsuarioActual({ ...user, ...cambios });
-    };
-
-    const cambiarPassword = (actual: string, nueva: string) => {
-        if (!user) return "No hay una sesión activa.";
-        if (user.password !== actual) return "La contraseña actual no es correcta.";
-        guardarUsuarioActual({ ...user, password: nueva });
-        return null;
+    //Devuelve null si se cambió, o el mensaje de error del backend
+    const cambiarPassword = async (actual: string, nueva: string) => {
+        try {
+            await cambiarPasswordApi(actual, nueva);
+            return null;
+        } catch (error) {
+            if (error instanceof ErrorApi) return error.errores.nueva ?? error.message;
+            return 'No se pudo cambiar la contraseña.';
+        }
     };
 
     return (
         <AuthContext.Provider value={{ user, login, logout, actualizarPerfil, cambiarPassword }}>
-        {children}
+            {children}
         </AuthContext.Provider>
     );
 };
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);

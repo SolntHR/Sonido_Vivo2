@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Producto } from '../data/db';
+import type { Producto } from '../api/tipos';
 
 export interface CartItem extends Producto {
     cantidad: number;

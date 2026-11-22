@@ -1,12 +1,21 @@
 import CardProducto from "../moleculas/CardProducto";
 import BotonDorado from "../atomos/BotonDorado";
-import { getProductos } from "../../data/db";
+import { useEffect, useState } from "react";
+import { listarProductos } from "../../api/productos";
+import type { Producto } from "../../api/tipos";
 import { useCart } from "../../context/useCart";
 
 function ProductosDestacados() {
     const { agregarAlCarrito } = useCart();
+    const [productos, setProductos] = useState<Producto[]>([]);
+    // Consulta el catálogo al backend al mostrar la sección
+    useEffect(() => {
+        listarProductos().then(setProductos).catch(() => setProductos([]));
+    }, []);
+
+    // Un producto por categoría, máximo 4
     const vistas = new Set<string>();
-    const destacados = getProductos()
+    const destacados = productos
         .filter((p) => {
             if (vistas.has(p.categoria)) return false;
             vistas.add(p.categoria);

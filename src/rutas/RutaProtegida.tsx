@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import type { Usuario } from '../data/db';
+import type { Usuario } from '../api/tipos';
 
 interface RutaProtegidaProps {
     rol?: Usuario['rol'];

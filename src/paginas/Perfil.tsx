@@ -25,7 +25,9 @@ function Perfil() {
                         <SelectorFoto
                             nombre={user.nombre}
                             foto={user.foto}
-                            alCambiar={(foto) => actualizarPerfil({ foto })}
+                            alCambiar={(foto) => {
+                                actualizarPerfil({ foto }).catch(() => alert("No se pudo actualizar la foto."));
+                            }}
                         />
                         <h4 className="mt-4 mb-1">{user.nombre}</h4>
                         <p className="mb-2 text-secondary">{user.correo}</p>

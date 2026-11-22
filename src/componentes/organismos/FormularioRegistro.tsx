@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
-import { crearUsuario } from "../../data/db";
+import { registrarse } from "../../api/auth";
+import { ErrorApi } from "../../api/cliente";
 import { regionesData } from "../../data/regiones";
 import { validarRut, normalizarRut, validarEmail, validarPassword } from "../../data/validaciones";
 
@@ -14,13 +15,16 @@ function FormularioRegistro() {
 
     const [errores, setErrores] = useState<Record<string, string>>({});
 
+    const [enviando, setEnviando] = useState(false);
+
     const handleChange = (campo: string, valor: string) => {
         setForm(prev => ({ ...prev, [campo]: valor }));
         if (errores[campo]) setErrores(prev => ({ ...prev, [campo]: '' }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (enviando) return;
         const nuevosErrores: Record<string, string> = {};
 
         if (!form.rut.trim()) {
@@ -53,23 +57,31 @@ function FormularioRegistro() {
             return;
         }
 
+        setEnviando(true);
         try {
-            crearUsuario({
+            // Crea la cuenta en el backend. El rol siempre queda como Cliente.
+            await registrarse({
                 rut: normalizarRut(form.rut),
                 nombre: `${form.nombre.trim()} ${form.apellido.trim()}`,
                 correo: form.correo.trim().toLowerCase(),
                 password: form.password,
-                rol: 'Cliente',
-                activo: true,
                 region: form.region,
                 comuna: form.comuna
             });
         } catch (error) {
-            const texto = error instanceof Error ? error.message : "No se pudo completar el registro.";
-            setErrores(texto.includes("correo") ? { correo: texto } : { rut: texto });
+            if (error instanceof ErrorApi && Object.keys(error.errores).length > 0) {
+                // 400: errores por campo que envía Spring (rut, correo, password...)
+                setErrores(error.errores);
+            } else if (error instanceof ErrorApi && error.status === 409) {
+                // 409: RUT o correo ya registrado
+                setErrores(error.message.includes("correo") ? { correo: error.message } : { rut: error.message });
+            } else {
+                setErrores({ general: error instanceof Error ? error.message : "No se pudo completar el registro." });
+            }
             return;
+        } finally {
+            setEnviando(false);
         }
-
         alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
         navigate('/login');
     };
@@ -80,7 +92,7 @@ function FormularioRegistro() {
 
     return (
         <form onSubmit={handleSubmit} noValidate aria-label="Formulario de registro">
-
+        {errores.general && <div className="alert alert-danger py-2" role="alert">{errores.general}</div>}
         <CampoFormulario etiqueta="RUN (con o sin puntos y guion)" tipo="text" nombre="rut" valor={form.rut} alCambiar={(v) => handleChange('rut', v)} error={errores.rut} />
 
         <div className="row">
@@ -148,8 +160,8 @@ function FormularioRegistro() {
             </div>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-            Crear Cuenta
+        <button type="submit" className="btn btn-primary w-100 disabled={enviando}">
+            {enviando ? "Creando cuenta..." : "Crear Cuenta"}
         </button>
 
         </form>

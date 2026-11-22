@@ -1,29 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getProductos, crearProducto, actualizarProducto, eliminarProducto } from '../data/db';
-import type { Producto } from '../data/db';
-import { categorias } from '../data/categorias';
+import { crearProducto, editarProducto as editarProductoApi, eliminarProducto, listarProductos, type DatosProducto } from '../api/productos';
+import { listarCategorias } from '../api/categorias';
+import { ErrorApi } from '../api/cliente';
+import type { Producto } from '../api/tipos';
 import { filtrarProductos } from '../data/filtros';
 import { validarProducto } from '../data/validaciones';
 import FormularioProducto, { type ProductoFormData } from '../componentes/organismos/FormularioProducto';
 import TablaAdmin from '../componentes/organismos/TablaAdmin';
 import BotonAccion from '../componentes/atomos/BotonAccion';
 
-const CATEGORIAS_DISPONIBLES = categorias.map(c => c.nombre);
-
 const FORM_VACIO: ProductoFormData = {
   codigo: '', nombreproducto: '', categoria: '', marca: '', modelo: '', precio: '', stock: '', descripcion: '', imagen: ''
 };
 
 const AdminMantenedor = () => {
-  const [productos, setProductos] = useState<Producto[]>(() => getProductos());
+  // Datos del backend: GET /productos y GET /categorias
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [CATEGORIAS_DISPONIBLES, setCategorias] = useState<string[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [codigoEditando, setCodigoEditando] = useState<string | null>(null);
+  // El backend identifica los productos por id: PATCH y DELETE /productos/{id}
+  const [idEditando, setIdEditando] = useState<number | null>(null);
+  const [enviando, setEnviando] = useState(false);
   const [categoriasFiltro, setCategoriasFiltro] = useState<string[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [mensaje, setMensaje] = useState('');
 
   const [form, setForm] = useState<ProductoFormData>(FORM_VACIO);
   const [errores, setErrores] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    Promise.all([listarProductos(), listarCategorias()])
+      .then(([lista, cats]) => {
+        setProductos(lista);
+        setCategorias(cats.map(c => c.nombre));
+      })
+      .catch((error: Error) => setMensaje(`No se pudo cargar el inventario: ${error.message}`))
+      .finally(() => setCargando(false));
+  }, []);
 
   const handleChange = (campo: keyof ProductoFormData, valor: string) => {
     setForm(prev => ({ ...prev, [campo]: valor }));
@@ -39,8 +54,9 @@ const AdminMantenedor = () => {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (enviando) return;
 
     const nuevosErrores = validarProducto(form);
     if (Object.keys(nuevosErrores).length > 0) {
@@ -50,43 +66,58 @@ const AdminMantenedor = () => {
 
     if (Number(form.precio) < 1000) {
       const confirmar = window.confirm(
-        `⚠️ Alerta: El precio ingresado es de $${form.precio}.\n¿Estás seguro de que este precio es correcto?`
+        `Alerta: El precio ingresado es de $${form.precio}.\n¿Estás seguro de que este precio es correcto?`
       );
       if (!confirmar) return;
     }
 
-    const productoData: Producto = {
-      codigo: form.codigo.trim().toUpperCase(),
-      nombreproducto: form.nombreproducto.trim(),
-      categoria: form.categoria,
-      marca: form.marca.trim(),
-      modelo: form.modelo.trim(),
-      precio: Number(form.precio),
-      stock: Number(form.stock),
-      descripcion: form.descripcion.trim(),
-      imagen: form.imagen.trim() || undefined,
+    const datos: DatosProducto = {
+    codigo: form.codigo.trim().toUpperCase(),
+    nombreproducto: form.nombreproducto.trim(),
+    categoria: form.categoria,
+    marca: form.marca.trim(),
+    modelo: form.modelo.trim(),
+    precio: Number(form.precio),
+    stock: Number(form.stock),
+    descripcion: form.descripcion.trim(),
+    imagen: form.imagen.trim(),
     };
 
+    setEnviando(true);
     try {
-      if (codigoEditando) {
-        setProductos(actualizarProducto(codigoEditando, productoData));
-        setMensaje(`Producto ${productoData.codigo} actualizado correctamente.`);
+      if (idEditando !== null) {
+        // PATCH /productos/{id}
+        const actualizado = await editarProductoApi(idEditando, datos);
+        setProductos(prev => prev.map(p => (p.id === actualizado.id ? actualizado : p)));
+        setMensaje(`Producto ${actualizado.codigo} actualizado correctamente.`);
       } else {
-        setProductos(crearProducto(productoData));
-        setMensaje(`Producto ${productoData.codigo} creado correctamente.`);
+        // POST /productos
+        const creado = await crearProducto(datos);
+        setProductos(prev => [...prev, creado]);
+        setMensaje(`Producto ${creado.codigo} creado correctamente.`);
       }
       limpiarFormulario();
     } catch (error) {
-      setErrores({ codigo: error instanceof Error ? error.message : 'No se pudo guardar el producto.' });
+      if (error instanceof ErrorApi && Object.keys(error.errores).length > 0) {
+        setErrores(error.errores);           // 400: errores por campo del backend
+      } else if (error instanceof ErrorApi && error.status === 409) {
+        setErrores({ codigo: error.message }); // 409: "Este código ya existe."
+      } else {
+        setMensaje(error instanceof Error ? error.message : 'No se pudo guardar el producto.');
+      }
+    } finally {
+      setEnviando(false);
     }
   };
 
-  const handleEliminar = (codigo: string) => {
-    if (!window.confirm(`¿Seguro que deseas eliminar el producto ${codigo}?`)) return;
+  const handleEliminar = async (p: Producto) => {
+    if (!window.confirm(`¿Seguro que deseas eliminar el producto ${p.codigo}?`)) return;
     try {
-      setProductos(eliminarProducto(codigo));
-      if (codigoEditando === codigo) limpiarFormulario();
-      setMensaje(`Producto ${codigo} eliminado.`);
+      // DELETE /productos/{id}
+      await eliminarProducto(p.id);
+      setProductos(prev => prev.filter(x => x.id !== p.id));
+      if (idEditando === p.id) limpiarFormulario();
+      setMensaje(`Producto ${p.codigo} eliminado.`);
     } catch (error) {
       setMensaje(error instanceof Error ? error.message : 'No se pudo eliminar el producto.');
     }
@@ -101,10 +132,11 @@ const AdminMantenedor = () => {
       modelo: p.modelo,
       precio: p.precio.toString(),
       stock: p.stock.toString(),
-      descripcion: p.descripcion,
+      descripcion: p.descripcion ?? '',
       imagen: p.imagen ?? '',
     });
     setCodigoEditando(p.codigo);
+    setIdEditando(p.id);
     setErrores({});
     setMensaje('');
   };
@@ -112,6 +144,7 @@ const AdminMantenedor = () => {
   const limpiarFormulario = () => {
     setForm(FORM_VACIO);
     setCodigoEditando(null);
+    setIdEditando(null);
     setErrores({});
   };
 
@@ -144,7 +177,9 @@ const AdminMantenedor = () => {
 
             <div className="card-header bg-white py-3">
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-                <h5 className="mb-0 fw-bold">Inventario Actual ({productosFiltrados.length})</h5>
+                <h5 className="mb-0 fw-bold">
+                  {cargando ? 'Cargando inventario...' : `Inventario Actual (${productosFiltrados.length})`}
+                </h5>
                 <input
                   type="search"
                   className="form-control w-auto flex-md-grow-0"
@@ -179,7 +214,7 @@ const AdminMantenedor = () => {
               hayDatos={productosFiltrados.length > 0}
             >
               {productosFiltrados.map(p => (
-                <tr key={p.codigo}>
+                <tr key={p.id}>
                   <td className="fw-bold">{p.codigo}</td>
                   <td>{p.nombreproducto ?? '—'}</td>
                   <td>{p.categoria}</td>
@@ -192,7 +227,7 @@ const AdminMantenedor = () => {
                   </td>
                   <td className="text-center text-nowrap">
                     <BotonAccion icono="✏️" color="primary" title={`Editar ${p.codigo}`} onClick={() => editarProducto(p)} />
-                    <BotonAccion icono="🗑️" color="danger" title={`Eliminar ${p.codigo}`} onClick={() => handleEliminar(p.codigo)} />
+                    <BotonAccion icono="🗑️" color="danger" title={`Eliminar ${p.codigo}`} onClick={() => handleEliminar(p)} />
                   </td>
                 </tr>
               ))}

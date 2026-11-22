@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { useAuth } from '../../context/AuthContext';
 import { validarEmail } from '../../data/validaciones';
-
+import { ErrorApi } from '../../api/cliente';
 
 function FormularioLogin() {
 
@@ -11,13 +11,17 @@ function FormularioLogin() {
     const [contrasena, setContrasena] = useState("");
     const [errores, setErrores] = useState<{ correo?: string; contrasena?: string; general?: string }>({});
 
+    const [enviando, setEnviando] = useState(false);
+
     const { login } = useAuth();
     const navigate = useNavigate();
 
 
-    const manejarLogin = (e: React.SubmitEvent<HTMLFormElement>) =>{
+    const manejarLogin = async (e: React.SubmitEvent<HTMLFormElement>) =>{
 
         e.preventDefault();
+
+        if (enviando) return;
 
         const nuevosErrores: typeof errores = {};
         let esValido = true;
@@ -42,13 +46,18 @@ function FormularioLogin() {
             return;
         }
 
-        const usuario = login(correo, contrasena);
-
-        if (usuario) {
+        setEnviando(true);
+        try {
+            // Envía el correo y la contraseña al backend (POST /auth/login)
+            const usuario = await login(correo, contrasena);
             setErrores({});
             navigate(usuario.rol === "Administrador" ? "/admin" : "/perfil");
-        } else {
-            setErrores({ general: "Credenciales incorrectas. Verifique su correo y contraseña." });
+        } catch (error) {
+            // Muestra el mensaje del backend, por ejemplo "Correo o contraseña incorrectos"
+            const mensaje = error instanceof ErrorApi ? error.message : "No se pudo iniciar sesión. Intente nuevamente.";
+            setErrores({ general: mensaje });
+        } finally {
+            setEnviando(false);
         }
     };
 
@@ -73,8 +82,8 @@ function FormularioLogin() {
                 error={errores.contrasena}
             />
 
-            <button type="submit" className="btn btn-primary">
-                Iniciar sesión
+            <button type="submit" className="btn btn-primary" disabled={enviando}>
+                {enviando ? "Ingresando..." : "Iniciar sesión"}
             </button>
 
         </form>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { useAuth } from "../../context/AuthContext";
 import { regionesData } from "../../data/regiones";
+import { ErrorApi } from "../../api/cliente";
 
 function FormularioPerfil() {
     const { user, actualizarPerfil } = useAuth();
@@ -13,6 +14,7 @@ function FormularioPerfil() {
     });
     const [errores, setErrores] = useState<Record<string, string>>({});
     const [guardado, setGuardado] = useState(false);
+    const [enviando, setEnviando] = useState(false);
 
     if (!user) return null;
 
@@ -24,7 +26,7 @@ function FormularioPerfil() {
 
     const comunas = regionesData.find((r) => r.region === form.region)?.comunas ?? [];
 
-    const guardar = (e: React.FormEvent) => {
+    const guardar = async (e: React.FormEvent) => {
         e.preventDefault();
         const nuevos: Record<string, string> = {};
         if (!form.nombre.trim()) nuevos.nombre = "El nombre es obligatorio.";
@@ -36,19 +38,29 @@ function FormularioPerfil() {
             setErrores(nuevos);
             return;
         }
-        actualizarPerfil({
-            nombre: form.nombre.trim(),
-            telefono: form.telefono.trim(),
-            region: form.region,
-            comuna: form.comuna,
-        });
+        setEnviando(true);
+        try {
+            // PATCH /usuarios/perfil: solo se envían los datos del formulario
+            await actualizarPerfil({
+                nombre: form.nombre.trim(),
+                telefono: form.telefono.trim(),
+                region: form.region,
+                comuna: form.comuna,
+            });
+            setGuardado(true);
+        } catch (error) {
+            if (error instanceof ErrorApi && Object.keys(error.errores).length > 0) setErrores(error.errores);
+            else setErrores({ general: error instanceof Error ? error.message : "No se pudieron guardar los cambios." });
+        } finally {
+            setEnviando(false);
+        }
         setGuardado(true);
     };
 
     return (
         <form onSubmit={guardar} noValidate className="text-start">
             {guardado && <div className="alert alert-success py-2">Datos guardados correctamente.</div>}
-
+            {errores.general && <div className="alert alert-danger py-2">{errores.general}</div>}
             <div className="row">
                 <div className="col-md-6 mb-3">
                     <label className="form-label">RUN</label>
@@ -97,7 +109,7 @@ function FormularioPerfil() {
                 </div>
             </div>
 
-            <button type="submit" className="btn btn-primary">Guardar cambios</button>
+            <button type="submit" className="btn btn-primary disabled={enviando}">{enviando ? "Guardando..." : "Guardar cambios"}</button>
         </form>
     );
 }

@@ -1,4 +1,4 @@
-import type { Producto } from '../../data/db';
+import type { Producto } from '../../api/tipos';
 import BotonVolver from "../atomos/BotonVolver";
 import BotonAgregar from "../atomos/BotonAgregar";
 
