@@ -1,38 +1,62 @@
 import { useState } from "react";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
-import { leerJSON } from "../data/db";
 import { validarEmail } from "../data/validaciones";
 import MapaTienda from "../componentes/moleculas/MapaTienda";
 import { TIENDA } from "../data/tienda";
+import { enviarMensajeContacto } from "../api/contacto";
+import { ErrorApi } from "../api/cliente";
 
 const Contacto = () => {
     const [form, setForm] = useState({ nombre: "", correo: "", mensaje: "" });
     const [errores, setErrores] = useState<Record<string, string>>({});
     const [enviado, setEnviado] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
     const cambiar = (campo: string, valor: string) => {
         setForm((f) => ({ ...f, [campo]: valor }));
         if (errores[campo]) setErrores((e) => ({ ...e, [campo]: "" }));
         setEnviado(false);
+        setErrorEnvio(null);
     };
 
-    const enviar = (e: React.FormEvent) => {
+    const enviar = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const nuevos: Record<string, string> = {};
         if (!form.nombre.trim()) nuevos.nombre = "Ingresa tu nombre.";
+        else if (form.nombre.trim().length > 100) nuevos.nombre = "El nombre no puede superar los 100 caracteres.";
         if (!form.correo.trim()) nuevos.correo = "Ingresa tu correo.";
         else if (!validarEmail(form.correo.trim())) nuevos.correo = "Ingresa un correo válido.";
+        else if (form.correo.trim().length > 100) nuevos.correo = "El correo no puede superar los 100 caracteres.";
         if (!form.mensaje.trim()) nuevos.mensaje = "Escribe tu mensaje.";
         else if (form.mensaje.trim().length < 10) nuevos.mensaje = "El mensaje debe tener al menos 10 caracteres.";
+        else if (form.mensaje.trim().length > 500) nuevos.mensaje = "El mensaje no puede superar los 500 caracteres.";
         if (Object.keys(nuevos).length > 0) {
             setErrores(nuevos);
             return;
         }
-        const previos = leerJSON<unknown[]>("mensajesContacto");
-        const guardados = Array.isArray(previos) ? previos : [];
-        localStorage.setItem("mensajesContacto", JSON.stringify([...guardados, { ...form, fecha: new Date().toISOString() }]));
-        setForm({ nombre: "", correo: "", mensaje: "" });
-        setEnviado(true);
+
+        setEnviando(true);
+        setErrorEnvio(null);
+        try {
+            await enviarMensajeContacto({
+                nombre: form.nombre.trim(),
+                correo: form.correo.trim(),
+                mensaje: form.mensaje.trim(),
+            });
+            setForm({ nombre: "", correo: "", mensaje: "" });
+            setErrores({});
+            setEnviado(true);
+        } catch (error) {
+            if (error instanceof ErrorApi) {
+                setErrores(error.errores);
+                setErrorEnvio(Object.keys(error.errores).length === 0 ? error.message : null);
+            } else {
+                setErrorEnvio("No se pudo enviar el mensaje. Inténtalo nuevamente.");
+            }
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -63,10 +87,11 @@ const Contacto = () => {
                 <div className="col-12 col-lg-6">
                     <div className="card p-4 text-start">
                         <h4 className="text-gold mb-3">Envíanos un mensaje</h4>
-                        {enviado && <div className="alert alert-success py-2">¡Mensaje enviado! Gracias por escribirnos.</div>}
+                        {enviado && <div className="alert alert-success py-2" role="status">¡Mensaje enviado! Gracias por escribirnos.</div>}
+                        {errorEnvio && <div className="alert alert-danger py-2" role="alert">{errorEnvio}</div>}
                         <form onSubmit={enviar} noValidate aria-label="Formulario de contacto">
-                            <CampoFormulario etiqueta="Nombre" tipo="text" nombre="nombre" valor={form.nombre} alCambiar={(v) => cambiar("nombre", v)} error={errores.nombre} />
-                            <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="correo" valor={form.correo} alCambiar={(v) => cambiar("correo", v)} error={errores.correo} />
+                            <CampoFormulario etiqueta="Nombre" tipo="text" nombre="nombre" valor={form.nombre} alCambiar={(v) => cambiar("nombre", v)} error={errores.nombre} deshabilitado={enviando} />
+                            <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="correo" valor={form.correo} alCambiar={(v) => cambiar("correo", v)} error={errores.correo} deshabilitado={enviando} />
                             <div className="mb-3">
                                 <label className="form-label" htmlFor="contacto-mensaje">Mensaje</label>
                                 <textarea
@@ -74,11 +99,15 @@ const Contacto = () => {
                                     className={`form-control ${errores.mensaje ? "is-invalid" : ""}`}
                                     rows={5}
                                     value={form.mensaje}
+                                    maxLength={500}
+                                    disabled={enviando}
                                     onChange={(e) => cambiar("mensaje", e.target.value)}
                                 />
                                 {errores.mensaje && <div className="invalid-feedback d-block" role="alert">{errores.mensaje}</div>}
                             </div>
-                            <button type="submit" className="btn btn-primary">Enviar mensaje</button>
+                            <button type="submit" className="btn btn-primary" disabled={enviando}>
+                                {enviando ? "Enviando…" : "Enviar mensaje"}
+                            </button>
                         </form>
                     </div>
                 </div>
