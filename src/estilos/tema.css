@@ -168,3 +168,6 @@
     transform: translateY(-5px);
     border-color: #d4af37 !important;
 }
+
+/* Separador "/" de las migas de pan (breadcrumb) en el tema oscuro */
+.breadcrumb-item + .breadcrumb-item::before { color: rgba(255, 255, 255, 0.5); }

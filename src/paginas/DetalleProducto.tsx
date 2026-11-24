@@ -41,7 +41,7 @@ function DetalleProducto() {
     return (
         <div className="container my-5">
       <nav aria-label="breadcrumb" className="mb-4">
-        <ol className="breadcrumb">
+        <ol className="breadcrumb bg-transparent p-0 mb-0">
           <li className="breadcrumb-item">
             <Link to="/productos" className="text-warning text-decoration-none">Catálogo</Link>
           </li>
