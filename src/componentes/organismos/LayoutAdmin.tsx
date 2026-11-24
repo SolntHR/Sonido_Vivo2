@@ -38,6 +38,12 @@ const AdminLayout = () => {
                     <Link className="nav-link" to="/admin/usuarios" onClick={cerrar}>Mantenedor Usuarios</Link>
                     </li>
                     <li className="nav-item">
+                    <Link className="nav-link" to="/admin/noticias" onClick={cerrar}>Noticias</Link>
+                    </li>
+                    <li className="nav-item">
+                    <Link className="nav-link" to="/admin/mensajes" onClick={cerrar}>Mensajes</Link>
+                    </li>
+                    <li className="nav-item">
                     <Link className="nav-link" to="/iniciopublico" onClick={cerrar}>Ver tienda</Link>
                     </li>
                     <li className="nav-item">

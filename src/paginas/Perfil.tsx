@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import SelectorFoto from "../componentes/moleculas/SelectorFoto";
 import FormularioPerfil from "../componentes/organismos/FormularioPerfil";
 import CambiarPassword from "../componentes/organismos/CambiarPassword";
+import MisMensajes from "../componentes/organismos/MisMensajes";
 import { useAuth } from "../context/AuthContext";
 
 function Perfil() {
@@ -49,9 +50,13 @@ function Perfil() {
                         <h4 className="text-gold mb-3 text-start">Datos personales</h4>
                         <FormularioPerfil />
                     </div>
-                    <div className="card p-4">
+                    <div className="card p-4 mb-4">
                         <h4 className="text-gold mb-3 text-start">Seguridad</h4>
                         <CambiarPassword />
+                    </div>
+                    <div className="card p-4 text-start">
+                        <h4 className="text-gold mb-3">Mis mensajes</h4>
+                        <MisMensajes />
                     </div>
                 </div>
             </div>

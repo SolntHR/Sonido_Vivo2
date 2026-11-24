@@ -44,3 +44,28 @@ export interface LoginResponse {
     expiraEnSegundos: number;
     usuario: Usuario;
 }
+
+export type EstadoMensaje = 'PENDIENTE' | 'ATENDIDO';
+
+/** Mensaje del formulario de Contacto (ContactoResponse del microservicio contacto) */
+export interface MensajeContacto {
+    id: number;
+    nombre: string;
+    correo: string;
+    mensaje: string;
+    estado: EstadoMensaje;
+    fechaCreacion: string;
+    respuesta?: string;
+    fechaRespuesta?: string;
+}
+
+/** Noticia del blog (NoticiaResponse del microservicio noticias) */
+export interface Noticia {
+    id: number;
+    categoria: string;
+    titulo: string;
+    fecha: string;
+    resumen: string;
+    contenido: string;
+    imagen?: string;
+}

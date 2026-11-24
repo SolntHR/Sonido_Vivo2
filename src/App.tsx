@@ -16,6 +16,8 @@ import CarritoFinal from './paginas/CarritoFinal'
 import InicioAdmin from './paginas/InicioAdmin'
 import AdminUsuarios from './paginas/AdminUsuarios'
 import AdminMantenedor from './paginas/AdminMantenedor'
+import AdminMensajes from './paginas/AdminMensajes'
+import AdminNoticias from './paginas/AdminNoticias'
 import NoticiaDetalle from './paginas/DetalleNoticias';
 
 
@@ -93,6 +95,8 @@ function App() {
               <Route path="/admin" element={<InicioAdmin />} />
               <Route path="/admin/usuarios" element={<AdminUsuarios />} />
               <Route path="/admin/mantenedor" element={<AdminMantenedor />} />
+              <Route path="/admin/noticias" element={<AdminNoticias />} />
+              <Route path="/admin/mensajes" element={<AdminMensajes />} />
             </Route>
 
           </Route>

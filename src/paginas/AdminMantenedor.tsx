@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { crearProducto, editarProducto as editarProductoApi, eliminarProducto, listarProductos, type DatosProducto } from '../api/productos';
 import { listarCategorias } from '../api/categorias';
 import { ErrorApi } from '../api/cliente';
@@ -25,6 +25,9 @@ const AdminMantenedor = () => {
   const [enviando, setEnviando] = useState(false);
   const [categoriasFiltro, setCategoriasFiltro] = useState<string[]>([]);
   const [busqueda, setBusqueda] = useState('');
+  // El Panel de Control enlaza a /admin/mantenedor?stock=agotados para ver solo los productos sin stock
+  const [params] = useSearchParams();
+  const [soloSinStock, setSoloSinStock] = useState(() => params.get('stock') === 'agotados');
   const [mensaje, setMensaje] = useState('');
 
   const [form, setForm] = useState<ProductoFormData>(FORM_VACIO);
@@ -148,7 +151,8 @@ const AdminMantenedor = () => {
     setErrores({});
   };
 
-  const productosFiltrados = filtrarProductos(productos, { categorias: categoriasFiltro, texto: busqueda });
+  const productosFiltrados = filtrarProductos(productos, { categorias: categoriasFiltro, texto: busqueda })
+    .filter(p => !soloSinStock || p.stock === 0);
 
   return (
     <div className="container-fluid px-3 px-md-4 my-5">
@@ -188,6 +192,19 @@ const AdminMantenedor = () => {
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                 />
+              </div>
+              <div className="form-check form-switch mb-2">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="check-sin-stock"
+                  checked={soloSinStock}
+                  onChange={(e) => setSoloSinStock(e.target.checked)}
+                />
+                <label className="form-check-label small fw-semibold text-danger" htmlFor="check-sin-stock" style={{cursor: 'pointer'}}>
+                  Solo productos sin stock
+                </label>
               </div>
               <div className="d-flex flex-wrap gap-3 align-items-center">
                 <span className="fw-semibold text-muted small">Filtrar por categoría:</span>
